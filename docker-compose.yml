@@ -24,7 +24,9 @@ services:
       - ORACLE_PWD=${DB_PASS}
     volumes:
       - oracle-data:/opt/oracle/oradata
+    restart: always
     shm_size: '1g'
-
+    
 volumes:
   oracle-data:
+     external: true
