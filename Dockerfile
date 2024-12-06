@@ -1,20 +1,23 @@
-# Usar una imagen base de Node.js
-FROM node
+# Usa una imagen base con Node.js
+FROM node:16
 
-# Establecer el directorio de trabajo
+# Establece el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copiar los archivos package.json y package-lock.json
+# Copia los archivos package.json y package-lock.json
 COPY package*.json ./
 
-# Instalar dependencias
+# Instala las dependencias
 RUN npm install
 
-# Copiar el resto de los archivos del proyecto
+# Copia todo el código de la aplicación
 COPY . .
 
-# Exponer el puerto 3000
-EXPOSE 3000
+# Compila el código TypeScript
+RUN npx tsc
 
-# Comando para iniciar la aplicación
-CMD ["node", "index.js"]
+# Exponer el puerto en el que la aplicación correrá
+EXPOSE 3001
+
+# Comando para ejecutar el servidor
+CMD ["node", "build/index.js"]
