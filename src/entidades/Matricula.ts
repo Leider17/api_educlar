@@ -1,6 +1,7 @@
-import { Entity, Column, Generated, PrimaryColumn, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm"
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany } from "typeorm"
 import { Periodo } from "./Periodo"
 import { Estudiante } from "./Estudiante"
+import { GrupoAMatricula } from "./GrupoAMatricula"
 
 @Entity('matriculas')
 export class Matricula {
@@ -22,11 +23,14 @@ export class Matricula {
    @Column({type:"json"})
    matr_costoTotal: {"Derechos de matricula": string, "Descuento de":string, "Derechos complementarios":string, "Seguro estudiantil":string, "Fondo capital semilla":string, "Timbre pro cultura":string, "Subtotal":string, "Total":string}
 
-   @ManyToOne(() => Periodo, (periodo) => periodo.matriculas)
+   @ManyToOne(() => Periodo, (periodo) => periodo.matriculas, {onDelete:"CASCADE", onUpdate:"CASCADE"})
    @JoinColumn({ name: "matr_periodo" })
    periodo: Periodo
 
-   @ManyToOne(() => Estudiante, (estudiante) => estudiante.matriculas)
+   @ManyToOne(() => Estudiante, (estudiante) => estudiante.matriculas, {onDelete:"CASCADE", onUpdate:"CASCADE"})
    @JoinColumn({ name: "matr_estudiante" })
    estudiante: Estudiante
+
+   @OneToMany(() => GrupoAMatricula, (grupoMatricula) => grupoMatricula.matricula)
+   grupoMatricula: GrupoAMatricula[]
 }

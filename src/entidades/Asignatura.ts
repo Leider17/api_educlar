@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
 import { Grupo } from "./Grupo"
+import { AsignaturaADocenteAGrupo } from "./AsignaturaADocenteAGrupo"
 
 @Entity('asignaturas')
 export class Asignatura {
@@ -22,6 +23,9 @@ export class Asignatura {
    @Column({nullable:true})
    asig_prerequisitoEspecial: number
 
-   @OneToMany(() => Grupo, (grupos) => grupos.asignatura, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @OneToMany(() => Grupo, (grupos) => grupos.asignatura)
    grupos: Grupo[]
+
+   @OneToMany(() => AsignaturaADocenteAGrupo, (asignaturaDocenteGrupo) => asignaturaDocenteGrupo.asignatura)
+   asignaturaDocenteGrupo: AsignaturaADocenteAGrupo[]
 }

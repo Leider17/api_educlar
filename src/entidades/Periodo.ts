@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm"
 import { Matricula } from "./Matricula"
+import { GrupoAMatricula } from "./GrupoAMatricula"
 
 @Entity('periodos')
 export class Periodo {
@@ -18,6 +19,9 @@ export class Periodo {
    @Column()
    peri_precioBiblioteca: number
 
-   @OneToMany(() => Matricula, (matriculas) => matriculas.periodo, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @OneToMany(() => Matricula, (matriculas) => matriculas.periodo)
    matriculas: Matricula[]
+
+   @OneToMany(() => GrupoAMatricula, (grupoMatricula) => grupoMatricula.periodo)
+   grupoMatricula: GrupoAMatricula[]
 }

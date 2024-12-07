@@ -1,6 +1,9 @@
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany } from "typeorm"
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Usuario } from "./Usuario";
 import { Matricula } from "./Matricula";
+import { Descuento } from "./Descuento";
+import { EstudianteAPrograma } from "./EstudianteAPrograma";
+import { GrupoAMatricula } from "./GrupoAMatricula";
 
 @Entity('estudiantes')
 export class Estudiante {
@@ -17,6 +20,21 @@ export class Estudiante {
    @JoinColumn({ name: "estu_id" })
    usuario: Usuario
 
-   @OneToMany(() => Matricula, (matriculas) => matriculas.estudiante, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @OneToMany(() => Matricula, (matriculas) => matriculas.estudiante)
    matriculas: Matricula[]
+
+   // Al llamar estudiantes, muestra sus descuentos, no al reves
+   @ManyToMany(() => Descuento)
+   @JoinTable({
+      name:"estudiantes_descuentos",
+      joinColumn: {name:"estu_desc_idEstu", referencedColumnName:"estu_id"},
+      inverseJoinColumn: {name:"estu_desc_idDesc", referencedColumnName:"desc_id"}
+   })
+   descuentos: Descuento[]
+
+   @OneToMany(() => EstudianteAPrograma, (estudiantePrograma) => estudiantePrograma.estudiante)
+   estudiantePrograma: EstudianteAPrograma[]
+
+   @OneToMany(() => GrupoAMatricula, (grupoMatricula) => grupoMatricula.estudiante)
+   grupoMatricula: GrupoAMatricula[]
 }
