@@ -11,11 +11,11 @@ export class Docente {
    @Column()
    doce_programaAcademico: number
 
-   @OneToOne(() => Usuario, (usuario) => usuario.estudiante)
+   @OneToOne(() => Usuario, (usuario) => usuario.estudiante, {onDelete:"CASCADE"})
    @JoinColumn({ name: "doce_id" })
    usuario: Usuario
 
-   @ManyToOne(() => Programa, (programa) => programa.docentes, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Programa, (programa) => programa.docentes, {onDelete:"CASCADE"})
    @JoinColumn({ name: "doce_programaAcademico" })
    programa: Programa
 

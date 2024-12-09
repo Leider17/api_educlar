@@ -21,7 +21,7 @@ export class Programa {
    docentes: Docente[]
 
    // Al llamar programas, muestra sus asignaturas, no al reves
-   @ManyToMany(() => Asignatura)
+   @ManyToMany(() => Asignatura, {onDelete:"CASCADE"})
    @JoinTable({
       name:"programas_asignaturas",
       joinColumn: {name:"prog_asig_idProg", referencedColumnName:"prog_id"},

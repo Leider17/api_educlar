@@ -18,7 +18,7 @@ export class Grupo {
    @Column({type:"json"})
    grup_horarioSalon: {[dia: string]: {"salon":string, "horaInicio":string, "horaFin":string}}
 
-   @ManyToOne(() => Asignatura, (asignatura) => asignatura.grupos, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Asignatura, (asignatura) => asignatura.grupos, {onDelete:"CASCADE"})
    @JoinColumn({ name: "grup_asignatura" })
    asignatura: Asignatura
 

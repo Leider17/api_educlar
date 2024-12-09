@@ -16,7 +16,7 @@ export class Estudiante {
    @Column()
    estu_estrato: number
 
-   @OneToOne(() => Usuario, (usuario) => usuario.estudiante)
+   @OneToOne(() => Usuario, (usuario) => usuario.estudiante, {onDelete:"CASCADE"})
    @JoinColumn({ name: "estu_id" })
    usuario: Usuario
 
@@ -24,7 +24,7 @@ export class Estudiante {
    matriculas: Matricula[]
 
    // Al llamar estudiantes, muestra sus descuentos, no al reves
-   @ManyToMany(() => Descuento)
+   @ManyToMany(() => Descuento, {onDelete:"CASCADE"})
    @JoinTable({
       name:"estudiantes_descuentos",
       joinColumn: {name:"estu_desc_idEstu", referencedColumnName:"estu_id"},

@@ -24,19 +24,19 @@ export class GrupoAMatricula {
    @Column({type:"decimal", precision:3, scale:2})
    grup_matr_nota: number
 
-   @ManyToOne(() => Grupo, (grupo) => grupo.grupoMatricula, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Grupo, (grupo) => grupo.grupoMatricula, {onDelete:"CASCADE"})
    @JoinColumn({ name:"grup_matr_idGrup"})
    grupo: Grupo
 
-   @ManyToOne(() => Matricula, (matricula) => matricula.grupoMatricula, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Matricula, (matricula) => matricula.grupoMatricula, {onDelete:"CASCADE"})
    @JoinColumn({ name:"grup_matr_idMatr" })
    matricula: Matricula
 
-   @ManyToOne(() => Periodo, (periodo) => periodo.grupoMatricula, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Periodo, (periodo) => periodo.grupoMatricula, {onDelete:"CASCADE"})
    @JoinColumn({ name:"grup_matr_idPeri" })
    periodo: Periodo
 
-   @ManyToOne(() => Estudiante, (estudiante) => estudiante.grupoMatricula, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Estudiante, (estudiante) => estudiante.grupoMatricula, {onDelete:"CASCADE"})
    @JoinColumn({ name:"grup_matr_idEstu" })
    estudiante: Estudiante
 }

@@ -14,15 +14,15 @@ export class AsignaturaADocenteAGrupo {
    @PrimaryColumn()
    asig_doce_grup_idGrup: number
 
-   @ManyToOne(() => Asignatura, (asignatura) => asignatura.asignaturaDocenteGrupo, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Asignatura, (asignatura) => asignatura.asignaturaDocenteGrupo, {onDelete:"CASCADE"})
    @JoinColumn({ name:"asig_doce_grup_idAsig" })
    asignatura: Asignatura
 
-   @ManyToOne(() => Docente, (docente) => docente.asignaturaDocenteGrupo, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Docente, (docente) => docente.asignaturaDocenteGrupo, {onDelete:"CASCADE"})
    @JoinColumn({ name:"asig_doce_grup_idDoce" })
    docente: Docente
 
-   @ManyToOne(() => Grupo, (grupo) => grupo.asignaturaDocenteGrupo, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Grupo, (grupo) => grupo.asignaturaDocenteGrupo, {onDelete:"CASCADE"})
    @JoinColumn({ name:"asig_doce_grup_idGrup" })
    grupo: Grupo
 }

@@ -13,11 +13,11 @@ export class EstudianteAPrograma {
    @Column()
    estu_prog_semestre: number
 
-   @ManyToOne(() => Estudiante, (estudiante) => estudiante.estudiantePrograma, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Estudiante, (estudiante) => estudiante.estudiantePrograma, {onDelete:"CASCADE"})
    @JoinColumn({ name:"estu_prog_idEstu" })
    estudiante: Estudiante
 
-   @ManyToOne(() => Programa, (programa) => programa.estudiantePrograma, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @ManyToOne(() => Programa, (programa) => programa.estudiantePrograma, {onDelete:"CASCADE"})
    @JoinColumn({ name:"estu_prog_idProg" })
    programa: Programa
 }

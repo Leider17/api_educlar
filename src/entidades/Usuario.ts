@@ -32,9 +32,9 @@ export class Usuario {
    @Column({length:50})
    usu_imagenPerfil: string
 
-   @OneToOne(() => Estudiante, (estudiante) => estudiante.usuario, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @OneToOne(() => Estudiante, (estudiante) => estudiante.usuario)
    estudiante: Estudiante
 
-   @OneToOne(() => Docente, (docente) => docente.usuario, {onDelete:"CASCADE", onUpdate:"CASCADE"})
+   @OneToOne(() => Docente, (docente) => docente.usuario)
    docente: Docente
 }
