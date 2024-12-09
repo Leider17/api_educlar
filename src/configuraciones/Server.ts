@@ -3,6 +3,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import express from "express";
 import { connectToDatabase } from "./Connection";
+import apiDescuentoRuta from "../rutas/DescuentoRuta";
 
 class Server {
     public app: express.Application;
@@ -23,7 +24,7 @@ class Server {
     }
 
     public startRoutes() {
-        // Define tus rutas aquí
+        this.app.use("/descuentos", apiDescuentoRuta);
     }
 
     public async startServer() {
