@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Docente } from "./Docente"
-import { Asignatura } from "./Asignatura"
 import { EstudianteAPrograma } from "./EstudianteAPrograma"
+import { ProgramaAAsignatura } from "./ProgramaAAsignatura"
 
 @Entity('programas')
 export class Programa {
@@ -20,15 +20,9 @@ export class Programa {
    @OneToMany(() => Docente, (docentes) => docentes.programa)
    docentes: Docente[]
 
-   // Al llamar programas, muestra sus asignaturas, no al reves
-   @ManyToMany(() => Asignatura, {onDelete:"CASCADE"})
-   @JoinTable({
-      name:"programas_asignaturas",
-      joinColumn: {name:"prog_asig_idProg", referencedColumnName:"prog_id"},
-      inverseJoinColumn: {name:"prog_asig_idAsig", referencedColumnName:"asig_id"}
-   })
-   asignaturas: Asignatura[]
-
    @OneToMany(() => EstudianteAPrograma, (estudiantePrograma) => estudiantePrograma.programa)
    estudiantePrograma: EstudianteAPrograma[]
+
+   @OneToMany(() => ProgramaAAsignatura, (programaAsignatura) => programaAsignatura.programa)
+   programaAsignatura: ProgramaAAsignatura[]
 }

@@ -9,7 +9,6 @@ class AuthRuta {
    };
 
    public routesConfig() {
-
       this.ApiRoute.post("/login", authControlador.login);
    }
 }

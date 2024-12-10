@@ -12,6 +12,7 @@ import { Usuario } from "../entidades/Usuario";
 import { AsignaturaADocenteAGrupo } from "../entidades/AsignaturaADocenteAGrupo";
 import { EstudianteAPrograma } from "../entidades/EstudianteAPrograma";
 import { GrupoAMatricula } from "../entidades/GrupoAMatricula";
+import { ProgramaAAsignatura } from "../entidades/ProgramaAAsignatura";
 
 dotenv.config({ path: ".env" });
 
@@ -24,7 +25,7 @@ export const myDataSource = new DataSource({
     database: process.env.DB_NAME,
     entities: [Asignatura, Descuento, Docente, Estudiante,
         Grupo, Matricula, Periodo, Programa, Usuario, AsignaturaADocenteAGrupo,
-        EstudianteAPrograma, GrupoAMatricula],
+        EstudianteAPrograma, GrupoAMatricula, ProgramaAAsignatura],
     logging: process.env.DB_LOGGING === "true",
     synchronize: process.env.DB_SYNCHRONIZE === "true",
 });
