@@ -21,7 +21,4 @@ export class Periodo {
 
    @OneToMany(() => Matricula, (matriculas) => matriculas.periodo)
    matriculas: Matricula[]
-
-   @OneToMany(() => GrupoAMatricula, (grupoMatricula) => grupoMatricula.periodo)
-   grupoMatricula: GrupoAMatricula[]
 }

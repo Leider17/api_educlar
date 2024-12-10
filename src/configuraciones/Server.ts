@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { connectToDatabase } from "./Connection";
 import apiDescuentoRuta from "../rutas/DescuentoRuta";
+import apiEstudianteRuta from "../rutas/EstudianteRuta";
 
 class Server {
     public app: express.Application;
@@ -25,6 +26,7 @@ class Server {
 
     public startRoutes() {
         this.app.use("/descuentos", apiDescuentoRuta);
+        this.app.use("/estudiantes", apiEstudianteRuta);
     }
 
     public async startServer() {

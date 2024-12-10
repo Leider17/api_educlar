@@ -34,7 +34,4 @@ export class Estudiante {
 
    @OneToMany(() => EstudianteAPrograma, (estudiantePrograma) => estudiantePrograma.estudiante)
    estudiantePrograma: EstudianteAPrograma[]
-
-   @OneToMany(() => GrupoAMatricula, (grupoMatricula) => grupoMatricula.estudiante)
-   grupoMatricula: GrupoAMatricula[]
 }
