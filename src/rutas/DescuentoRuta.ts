@@ -1,6 +1,6 @@
 import { Router } from "express";
 import descuentoControlador from "../controladores/DescuentoControlador";
-
+import { verifyToken } from '../middleware/Auth';
 class DescuentoRuta {
    public ApiRoute: Router;
 
@@ -10,10 +10,10 @@ class DescuentoRuta {
    };
 
    public routesConfig() {
-      this.ApiRoute.get("/", descuentoControlador.get);
-      this.ApiRoute.post("/create", descuentoControlador.create);
-      this.ApiRoute.delete("/delete/:id", descuentoControlador.delete);
-      this.ApiRoute.put("/update/:id", descuentoControlador.update);
+      this.ApiRoute.get("/", verifyToken, descuentoControlador.get);
+      this.ApiRoute.post("/create", verifyToken, descuentoControlador.create);
+      this.ApiRoute.delete("/delete/:id", verifyToken, descuentoControlador.delete);
+      this.ApiRoute.put("/update/:id", verifyToken, descuentoControlador.update);
    }
 }
 
