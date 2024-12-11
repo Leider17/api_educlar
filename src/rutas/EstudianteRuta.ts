@@ -11,6 +11,7 @@ class EstudianteRuta {
 
    public routesConfig() {
       this.ApiRoute.get("/infoPerfil/:idEstu", estudianteControlador.getPerfil);
+      this.ApiRoute.get("/semaforo/:idEstu", estudianteControlador.getSemaforo);
    }
 }
 
