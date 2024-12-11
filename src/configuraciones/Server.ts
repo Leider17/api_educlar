@@ -5,6 +5,7 @@ import express from "express";
 import { connectToDatabase } from "./Connection";
 import apiDescuentoRuta from "../rutas/DescuentoRuta";
 import apiEstudianteRuta from "../rutas/EstudianteRuta";
+import apiAuthRoute from "../rutas/AuthRutas";
 
 class Server {
     public app: express.Application;
@@ -27,6 +28,9 @@ class Server {
     public startRoutes() {
         this.app.use("/descuentos", apiDescuentoRuta);
         this.app.use("/estudiantes", apiEstudianteRuta);
+        this.app.use("/auth",  apiAuthRoute);
+
+        
     }
 
     public async startServer() {

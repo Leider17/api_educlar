@@ -8,6 +8,9 @@ export class AuthControlador extends AuthDao {
     public login(req: Request, res: Response) {
         return AuthControlador.autenticarUsuario(req.body, res);
     }
+    public verifyToken(req: Request, res: Response) {
+        return AuthControlador.verificarToken(req.body, res);
+    }
     
 }
 const authControlador = new AuthControlador();

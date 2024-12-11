@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authControlador from "../controladores/AuthControlador";
+
 class AuthRuta {
    public ApiRoute: Router;
 
@@ -10,6 +11,7 @@ class AuthRuta {
 
    public routesConfig() {
       this.ApiRoute.post("/login", authControlador.login);
+      this.ApiRoute.get("/verifyToken", authControlador.verifyToken);
    }
 }
 
