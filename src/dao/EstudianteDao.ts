@@ -6,7 +6,7 @@ import { Asignatura } from "../entidades/Asignatura";
 import { Matricula } from "../entidades/Matricula";
 import { GrupoAMatricula } from "../entidades/GrupoAMatricula";
 import { Periodo } from "../entidades/Periodo";
-import { IdsAsig, IdsGrupMatr, MapaCarrera, MapaHorario } from "../utilidades/Interfaces";
+import { Horario, IdsAsig, IdsGrupMatr, MapaCarrera, MapaHorario } from "../utilidades/Interfaces";
 import { Grupo } from "../entidades/Grupo";
 import { In } from "typeorm";
 import { AsignaturaADocenteAGrupo } from "../entidades/AsignaturaADocenteAGrupo";
@@ -339,17 +339,6 @@ async function generarSemaforo(idsAsig:IdsAsig[],idsGrMa:IdsGrupMatr[]) {
 
 async function generarHorarioAcademico(ids:number[]) {
    let indice = 0;
-   let data = {
-      name: "",
-      hourStart: new Date(),
-      hourEnd: new Date(),
-      teacher: "",
-      group: {
-         id: 0,
-         name: ""
-      },
-      room: ""
-   }
    const rta: MapaHorario = {
       monday: [],
       tuesday: [],
@@ -361,16 +350,15 @@ async function generarHorarioAcademico(ids:number[]) {
    const days = ['lunes','martes','miercoles','jueves','viernes','sabado'];
    const grupos = await grupRepository.findBy({ grup_id: In(ids) });
 
+
    for(const day of days){
       let menor = "00:00"
       while(menor != "25:00"){
+         let data: Horario | null = null;
          menor = "25:00"
          let i = 0
+         
          for(const grupo of grupos){
-            console.log(grupo.grup_horarioSalon)
-            //console.log(i)
-            //console.log(indice)
-            //console.log(day)
             let horaAux = grupo.grup_horarioSalon[day]
             // Si hay grupos para ese dia, guarda la hora inicio.
             // Si no, significa que arroja 'undefined' y se asigna una hora grande
@@ -415,17 +403,17 @@ async function generarHorarioAcademico(ids:number[]) {
          delete grupos[indice].grup_horarioSalon[day]
 
          // agregar el menor al arreglo
-         if(day == "lunes" && menor != "25:00"){
+         if(day == "lunes" && data){
             rta.monday.push(data);
-         } else if (day == "martes" && menor != "25:00"){
+         } else if (day == "martes" && data){
             rta.tuesday.push(data);
-         } else if (day == "miercoles" && menor != "25:00"){
+         } else if (day == "miercoles" && data){
             rta.wednesday.push(data);
-         } else if (day == "jueves" && menor != "25:00"){
+         } else if (day == "jueves" && data){
             rta.thursday.push(data);
-         } else if (day == "viernes" && menor != "25:00"){
+         } else if (day == "viernes" && data){
             rta.friday.push(data);
-         } else if (day == "sabado" && menor != "25:00"){
+         } else if (day == "sabado" && data){
             rta.saturday.push(data);
          }
       }
