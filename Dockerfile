@@ -17,7 +17,7 @@ COPY . .
 RUN npx tsc
 
 # Exponer el puerto en el que la aplicación correrá
-EXPOSE 3001
+EXPOSE 5400
 
 # Comando para ejecutar el servidor
 CMD ["node", "build/index.js"]

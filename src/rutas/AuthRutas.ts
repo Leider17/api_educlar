@@ -10,8 +10,8 @@ class AuthRuta {
    };
 
    public routesConfig() {
-      this.ApiRoute.post("/login", authControlador.login);
-      this.ApiRoute.get("/verifyToken", authControlador.verifyToken);
+      this.ApiRoute.post("/ingresar", authControlador.login);
+      this.ApiRoute.get("/verificarToken", authControlador.verifyToken);
    }
 }
 
