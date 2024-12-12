@@ -9,6 +9,10 @@ export class EstudianteControlador extends EstudianteDao {
    public getSemaforo(req:Request, res:Response) {
       EstudianteControlador.semaforo(req.params.idEstu, res);
    }
+
+   public getHorario(req:Request, res:Response) {
+      EstudianteControlador.horario(req.params.idEstu, res);
+   }
 }
 
 const estudianteControlador = new EstudianteControlador();

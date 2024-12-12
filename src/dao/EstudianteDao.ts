@@ -6,7 +6,11 @@ import { Asignatura } from "../entidades/Asignatura";
 import { Matricula } from "../entidades/Matricula";
 import { GrupoAMatricula } from "../entidades/GrupoAMatricula";
 import { Periodo } from "../entidades/Periodo";
+import { IdsAsig, IdsGrupMatr, MapaCarrera, MapaHorario } from "../utilidades/Interfaces";
+import { Grupo } from "../entidades/Grupo";
 import { In } from "typeorm";
+import { AsignaturaADocenteAGrupo } from "../entidades/AsignaturaADocenteAGrupo";
+import { Usuario } from "../entidades/Usuario";
 
 const estuRepository = myDataSource.getRepository(Estudiante);
 const progRepository = myDataSource.getRepository(Programa);
@@ -14,23 +18,9 @@ const asigRepository = myDataSource.getRepository(Asignatura);
 const matrRepository = myDataSource.getRepository(Matricula);
 const grupMatrRepository = myDataSource.getRepository(GrupoAMatricula);
 const periRepository = myDataSource.getRepository(Periodo);
-
-interface IdsGrupMatr {
-   idMatr: number;
-   grupos: number[];
-}
-interface IdsAsig {
-   idAsig: number;
-   seme: number;
-}
-interface Contenido {
-   id: number
-   name: string
-   status: string
-}
-interface MapaCarrera {
-   [key: number]: Contenido[]
-}
+const grupRepository = myDataSource.getRepository(Grupo);
+const asigDoceGrupRepository = myDataSource.getRepository(AsignaturaADocenteAGrupo);
+const usuRepository = myDataSource.getRepository(Usuario);
 
 class EstudianteDao {
    // obtener la informacion personal del estudiante
@@ -108,12 +98,12 @@ class EstudianteDao {
          return res.status(500).json({ response:'No se pudo recuperar informacion sobre el estudiante' });
       }
    }
-
+   // obtener el semaforo estudiantil
    static async semaforo(idEstu:any, res:Response) {
       try{
          const estudiante = await estuRepository.findOne({
             where: {estu_id:idEstu},
-            relations: ['usuario', 'estudiantePrograma']
+            relations: ['estudiantePrograma']
          });
 
          if(!estudiante){
@@ -163,6 +153,46 @@ class EstudianteDao {
          return res.status(200).json(semaforo);
       }catch(error){
          return res.status(500).json({ response:'No se pudo obtener el semaforo estudiantil' });
+      }
+   }
+
+   // obtener el horario matriculado del estudiante
+   static async horario(idEstu:any, res:Response) {
+      try{
+         const estudiante = await estuRepository.findOne({
+            where: {estu_id:idEstu},
+            relations: ['estudiantePrograma']
+         });
+         const periAux = await periRepository.findOne({
+            where: { peri_nombre:'2024-2' }
+         });
+
+         if(!estudiante){
+            return res.status(404).json({ response:'El estudiante no existe' });
+         }
+         if(!periAux){
+            return res.status(404).json({ response:'El periodo no existe' });
+         }
+
+
+         const matriculaEstu = await matrRepository.findOne({
+            where: {matr_estudiante:idEstu, matr_periodo:periAux.peri_id},
+            relations: ['grupoMatricula']
+         });
+
+         if(!matriculaEstu){
+            return res.status(404).json({ response:'El estudiante no tiene una matricula activa' });
+         }
+
+         // Grupos actuales que esta viendo el estudiante
+         const idsGrupos = matriculaEstu.grupoMatricula.map(item => item.grup_matr_idGrup);
+
+         const horario = await generarHorarioAcademico(idsGrupos);
+
+         
+         return res.status(200).json(horario);
+      }catch(error){
+         return res.status(500).json({ response:'No se pudo obtener el horario del estudiante' });
       }
    }
 }
@@ -216,9 +246,9 @@ async function generarSemaforo(idsAsig:IdsAsig[],idsGrMa:IdsGrupMatr[]) {
                // Busca el periodo actual
                const periodoAux = await periRepository.findOne({
                   where: { peri_nombre:'2024-2' }
-               })
+               });
                // Revisa si la materia esta en el periodo actual
-               const matriculaAux = await matrRepository.findOneBy({ matr_periodo:periodoAux?.peri_id })
+               const matriculaAux = await matrRepository.findOneBy({ matr_periodo:periodoAux?.peri_id });
 
 
                // Si esta en la intermedia
@@ -249,6 +279,110 @@ async function generarSemaforo(idsAsig:IdsAsig[],idsGrMa:IdsGrupMatr[]) {
    }
 
    return data;
+}
+
+async function generarHorarioAcademico(ids:number[]) {
+   let indice = 0;
+   let data = {
+      name: "",
+      hourStart: new Date(),
+      hourEnd: new Date(),
+      teacher: "",
+      group: {
+         id: 0,
+         name: ""
+      },
+      room: ""
+   }
+   const rta: MapaHorario = {
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+      saturday: []
+   };
+   const days = ['lunes','martes','miercoles','jueves','viernes','sabado'];
+   const grupos = await grupRepository.findBy({ grup_id: In(ids) });
+
+   for(const day of days){
+      let menor = "00:00"
+      while(menor != "25:00"){
+         menor = "25:00"
+         let i = 0
+         for(const grupo of grupos){
+            console.log(grupo.grup_horarioSalon)
+            //console.log(i)
+            //console.log(indice)
+            //console.log(day)
+            let horaAux = grupo.grup_horarioSalon[day]
+            // Si hay grupos para ese dia, guarda la hora inicio.
+            // Si no, significa que arroja 'undefined' y se asigna una hora grande
+            // para que se mantenga con el menor actual al momento de comprobar
+            let actual = horaAux ? horaAux.horaInicio:"30:00";
+
+            let fechaMenor = convertirAFecha(menor);
+            let fechaActual = convertirAFecha(actual);
+            
+            // Comprueba cual es la menor para almacenar primero
+            if(fechaActual < fechaMenor){
+               menor = actual
+               const asignatura = await asigRepository.findOneBy({ asig_id:grupo.grup_asignatura })
+               const doceAux = await asigDoceGrupRepository.findOne({
+                  where: {
+                     asig_doce_grup_idAsig:asignatura?.asig_id,
+                     asig_doce_grup_idGrup:grupo.grup_id
+                  }
+               })
+               
+               const usuAux = await usuRepository.findOneBy({ usu_cod:doceAux?.asig_doce_grup_idDoce })
+
+               // Agregar info provisional
+               if(asignatura && doceAux && usuAux){
+                  data = {
+                     name: asignatura.asig_nombre,
+                     hourStart: fechaActual,
+                     hourEnd: convertirAFecha(horaAux.horaFin),
+                     teacher: usuAux.usu_nombre,
+                     group: {
+                        id: grupo.grup_id,
+                        name: grupo.grup_nombre
+                     },
+                     room: horaAux.salon
+                  }
+                  indice = i;
+               }
+            }
+            i++;
+         }
+         // Eliminar grupo para no repetir en las proximas iteraciones
+         delete grupos[indice].grup_horarioSalon[day]
+
+         // agregar el menor al arreglo
+         if(day == "lunes" && menor != "25:00"){
+            rta.monday.push(data);
+         } else if (day == "martes" && menor != "25:00"){
+            rta.tuesday.push(data);
+         } else if (day == "miercoles" && menor != "25:00"){
+            rta.wednesday.push(data);
+         } else if (day == "jueves" && menor != "25:00"){
+            rta.thursday.push(data);
+         } else if (day == "viernes" && menor != "25:00"){
+            rta.friday.push(data);
+         } else if (day == "sabado" && menor != "25:00"){
+            rta.saturday.push(data);
+         }
+      }
+   }
+
+   return rta;
+}
+
+function convertirAFecha(hora: string) {
+   const [hh, mm] = hora.split(":").map(Number);
+   const fecha = new Date();
+   fecha.setHours(hh, mm, 0, 0);
+   return fecha;
 }
 
 export default EstudianteDao;
