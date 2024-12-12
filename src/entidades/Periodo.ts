@@ -17,7 +17,7 @@ export class Periodo {
    peri_precioTimbre: number
 
    @Column()
-   peri_precioBiblioteca: number
+   peri_precioSemilla: number
 
    @OneToMany(() => Matricula, (matriculas) => matriculas.periodo)
    matriculas: Matricula[]
