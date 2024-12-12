@@ -7,26 +7,44 @@ services:
     ports:
       - "${PORT}:${PORT}"
     volumes:
-    - '.:/var/www/html'
+      - .:/var/www/html
+      - /var/www/html/node_modules
     environment:
+      - NODE_ENV=production
+      - PORT=${PORT}
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
     depends_on:
-      - oracle-db
+      - postgres-db
+    networks:
+      - app-network
 
-  oracle-db:
-    image: container-registry.oracle.com/database/express:latest
-    container_name: oracle-db
+  postgres-db:
+    image: postgres
+    container_name: postgres-db
     ports:
-      - "1521:1521"
+      - "5432:5432"
     environment:
-      - ORACLE_PWD=${DB_PASS}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
-      - oracle-data:/opt/oracle/oradata
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
     restart: always
-    shm_size: '1g'
-    
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
 volumes:
-  oracle-data:
-     external: true
+  postgres-data:
