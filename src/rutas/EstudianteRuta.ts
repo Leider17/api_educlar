@@ -16,7 +16,7 @@ class EstudianteRuta {
       this.ApiRoute.get("/horario/:idEstu", estudianteControlador.getHorario);
       this.ApiRoute.get("/materiasValidas/:idEstu", estudianteControlador.getMateriasValidas);
       this.ApiRoute.put("/pagarMatricula/:idEstu", estudianteControlador.pagarMatricula);
-      this.ApiRoute.post("/matricularMateria/:idEstu/:idGrup/:idMateria", estudianteControlador.matricularMateria);
+      this.ApiRoute.post("/matricularMateria/:idEstu", estudianteControlador.matricularMateria);
    }
 }
 

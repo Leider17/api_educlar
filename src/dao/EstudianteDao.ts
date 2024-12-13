@@ -484,8 +484,8 @@ class EstudianteDao {
 
   static async matricularMateria(
     idEstu: any,
-    idGrup: any,
     idAsignatura: any,
+    idGrup: any,
     res: Response
   ) {
     try {

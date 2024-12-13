@@ -25,7 +25,7 @@ export class EstudianteControlador extends EstudianteDao {
    }
 
    public matricularMateria(req:Request, res:Response) {
-      EstudianteControlador.matricularMateria(req.params.idEstu, req.params.idGrup, req.params.idMateria, res);
+      EstudianteControlador.matricularMateria(req.params.idEstu, req.body.idMateria, req.body.idGrupo, res);
    }
 }
 
