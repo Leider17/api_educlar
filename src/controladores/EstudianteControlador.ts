@@ -27,6 +27,12 @@ export class EstudianteControlador extends EstudianteDao {
    public matricularMateria(req:Request, res:Response) {
       EstudianteControlador.matricularMateria(req.params.idEstu, req.body.idMateria, req.body.idGrupo, res);
    }
+   public cambiarGrupo(req:Request, res:Response) {
+      EstudianteControlador.cambiarGrupo(req.params.idEstu, req.body.idGrupo, res);
+   }
+   public eliminarGrupo(req:Request, res:Response) {
+      EstudianteControlador.eliminarGrupo(req.params.idEstu, req.body.idGrupo, res);
+   }
 }
 
 const estudianteControlador = new EstudianteControlador();
