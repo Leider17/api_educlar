@@ -23,11 +23,12 @@ export class AuthDao {
         });
       }
 
-      let contraseniaValida = false;
+      
 
-      if (credentials.password == usuario.usu_contrasenia) {
-        contraseniaValida = true;
-      }
+      const contraseniaValida = await validatePassword(
+                credentials.password,
+                usuario.usu_contrasenia
+            );
       if (!contraseniaValida) {
         return res.status(401).json({
           response: "Contraseña inválida"

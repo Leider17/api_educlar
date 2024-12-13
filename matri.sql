@@ -1,18 +1,18 @@
 -- ENTIDADES PRINCIPALES
 INSERT INTO usuarios
-	VALUES (1092344838,'estudiante','Cristian David Navarro Vasquez','cristiannavarro@unipamplona.edu.co','soycris','Pamplona, Colombia','cristian.png'),
-		   (1006409535,'estudiante','Daniel David Arias Monroy','daniel.arias@unipamplona.edu.co','soydaniel','Pamplona, Colombia','daniel.png'),
-		   (1000000001,'docente','Mauricio Rojas','mauricio.rojas@unipamplona.edu.co','soymauricio','Pamplona, Colombia','mauricion.png'),
-		   (1000000002,'docente','Pedro Torres','pedro.torres@unipamplona.edu.co','soypedro','Pamplona, Colombia','pedro.png'),
-		   (1000000003,'docente','Luis Perez','luis.perez@unipamplona.edu.co','soyluis','Pamplona, Colombia','luis.png'),
-		   (1000000004,'docente','Maria Vera','maria.vera@unipamplona.edu.co','soymaria','Pamplona, Colombia','maria.png'),
-		   (1000000005,'docente','Ailin Duarte','ailin.duarte@unipamplona.edu.co','soyailin','Pamplona, Colombia','ailin.png'),
-		   (1000000006,'docente','Alexis Vera','alexis.vera@unipamplona.edu.co','soyalexis','Pamplona, Colombia','alexis.png'),
-		   (1000000007,'docente','Luisa Rodriguez','luisa.rodriguez@unipamplona.edu.co','soyluisa','Pamplona, Colombia','luisa.png'),
-		   (1000000008,'docente','Santiago Mejia','santiago.mejia@unipamplona.edu.co','soysantiago','Pamplona, Colombia','santiago.png'),
-		   (1000000009,'docente','Luz Marina','luz.marina@unipamplona.edu.co','soyluz','Pamplona, Colombia','luz.png'),
-		   (1000000010,'docente','Mauricio Zafra','mauricio.zafra@unipamplona.edu.co','soymauricio','Pamplona, Colombia','mauricio.png'),
-		   (1000000011,'docente','Omar Portilla','omar.portilla@unipamplona.edu.co','soyomar','Pamplona, Colombia','omar.png');
+	VALUES (1092344838,'estudiante','Cristian David Navarro Vasquez','cristiannavarro@unipamplona.edu.co','$2b$10$q911VUA96nBeQxK3G4fvtOZRX3F2VnXLHHozEeLYFvv18h.Miyb3y','Pamplona, Colombia','cristian.png'),
+		   (1006409535,'estudiante','Daniel David Arias Monroy','daniel.arias@unipamplona.edu.co','$2b$10$Qw6Xuu0.MCc1G7.ICgu5neFhvFTL4Gjb/gAHbCNdiLodbeBaBnyIa','Pamplona, Colombia','daniel.png'),
+		   (1000000001,'docente','Mauricio Rojas','mauricio.rojas@unipamplona.edu.co','$2b$10$G8MxP7qAQJAz/c1SDr7PluzPkR1EW0WvchP5oUL19OrGo0/yNUBeS','Pamplona, Colombia','mauricion.png'),
+		   (1000000002,'docente','Pedro Torres','pedro.torres@unipamplona.edu.co','$2b$10$DBfI7amctjC0Gek.f0J0j.MQg8yMXYnT9Yp0z7f9Ho1tSCCKyk0t6','Pamplona, Colombia','pedro.png'),
+		   (1000000003,'docente','Luis Perez','luis.perez@unipamplona.edu.co','$2b$10$unV78HrYzbpmlhDu/Hb2xeyAzQTf82I4RpQcuzMrNbITpF85CFvJa','Pamplona, Colombia','luis.png'),
+		   (1000000004,'docente','Maria Vera','maria.vera@unipamplona.edu.co','$2b$10$Fzhp6XH3RKWUsFshdAHjFuJLN9X7TUCya10eqoDcwi/noX8UPHIlC','Pamplona, Colombia','maria.png'),
+		   (1000000005,'docente','Ailin Duarte','ailin.duarte@unipamplona.edu.co','$2b$10$UgeL6puA2YiokMoLM7q.FuB87nEytod6grfP8SEdGyzRb7loYG9Qi','Pamplona, Colombia','ailin.png'),
+		   (1000000006,'docente','Alexis Vera','alexis.vera@unipamplona.edu.co','$2b$10$xppRFioOxrDkZoy2gmBHf.hO254zxDD1D.g5k5UMx5pQSVv5Bq3TC','Pamplona, Colombia','alexis.png'),
+		   (1000000007,'docente','Luisa Rodriguez','luisa.rodriguez@unipamplona.edu.co','$2b$10$aUCFp9wz3fx9/2PZOwvk4eJbYs2S/0DjgQvP65RIyiLTMQrwIumX6','Pamplona, Colombia','luisa.png'),
+		   (1000000008,'docente','Santiago Mejia','santiago.mejia@unipamplona.edu.co','$2b$10$ugu1uj23jyQFYQvMKDxdO.cs6Mm9c4kwFY7B7PNW0qd6v0mNav.7e','Pamplona, Colombia','santiago.png'),
+		   (1000000009,'docente','Luz Marina','luz.marina@unipamplona.edu.co','$2b$10$XHZbaD4Up3nt6zVB8Uyyr.WigUxJKL0SzrcadsUJMGSNsjrbamRbS','Pamplona, Colombia','luz.png'),
+		   (1000000010,'docente','Mauricio Zafra','mauricio.zafra@unipamplona.edu.co','$2b$10$YUsBYfFz//tkHyOsyTbJhOH1Sq48Z1fXnyvRyyBKIgnxDVUHvS9VK','Pamplona, Colombia','mauricio.png'),
+		   (1000000011,'docente','Omar Portilla','omar.portilla@unipamplona.edu.co','$2b$10$jyNx7V8itvob/aPatEIwOOKeCLXn5ZrA.iAfeVA5np8qnlIikSjh.','Pamplona, Colombia','omar.png');
 
 INSERT INTO estudiantes
 	VALUES (1092344838,124,1),		--semestre7
@@ -162,7 +162,8 @@ INSERT INTO grupos(grup_asignatura,grup_nombre,"grup_horarioSalon")
 		   (167412, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "12:00"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "16:00"}}'),
 		   (167413, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "12:00"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "16:00"}}'),
 		   (167414, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "12:00"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "16:00"}}'),
-		   (200003, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "12:00"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "16:00"}}');
+		   (200003, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "12:00"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "16:00"}}'),
+		   (167418, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "12:00"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "16:00"}}');
 
 INSERT INTO matriculas(matr_periodo,matr_estudiante,"matr_costoFinal","matr_estadoPago","matr_costoTotal")
 	VALUES (1,1092344838,148000,'true','{ "Derechos de matricula": 900000, "Descuento de": -900000, "Derechos complementarios": 100000, "Timbre pro cultura": 12000, "Seguro estudiantil": 30000, "Fondo capital semilla": 6000, "Subtotal": 1048000, "Total": 148000}'),
