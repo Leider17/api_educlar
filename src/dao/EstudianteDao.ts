@@ -238,41 +238,34 @@ class EstudianteDao {
   // obtener el horario matriculado del estudiante
   static async horario(idEstu: any, res: Response) {
     try {
-      const estudiante = await estuRepository.findOne({
-        where: { estu_id: idEstu },
-        relations: ["estudiantePrograma"],
-      });
-      const periAux = await periRepository.findOne({
-        where: { peri_nombre: "2024-2" },
-      });
+      const resultado = await Promise.race([
+        (async () => {
+          // Lógica original del endpoint
+          const estudiante = await estuRepository.findOne({
+            where: { estu_id: idEstu },
+            relations: ["estudiantePrograma"],
+          });
+          const periAux = await periRepository.findOne({
+            where: { peri_nombre: "2024-2" },
+          });
+          if (!estudiante || !periAux) {
+            return res.status(404).json({ response: "Datos no encontrados" });
+          }
 
-      if (!estudiante) {
-        return res.status(404).json({ response: "El estudiante no existe" });
-      }
-      if (!periAux) {
-        return res.status(404).json({ response: "El periodo no existe" });
-      }
-
-      const matriculaEstu = await matrRepository.findOne({
-        where: { matr_estudiante: idEstu, matr_periodo: periAux.peri_id },
-        relations: ["grupoMatricula"],
-      });
-
-      if (!matriculaEstu) {
-        return res
-          .status(404)
-          .json({ response: "El estudiante no tiene una matricula activa" });
-      }
-
-      // Grupos actuales que esta viendo el estudiante
-      const idsGrupos = matriculaEstu.grupoMatricula.map(
-        (item) => item.grup_matr_idGrup
-      );
-
-      const horario = await generarHorarioAcademico(idsGrupos);
-
-      return res.status(200).json(horario);
+          const matriculaEstu = await matrRepository.findOne({
+            where: { matr_estudiante: idEstu, matr_periodo: periAux.peri_id },
+            relations: ["grupoMatricula"],
+          });
+          const idsGrupos = matriculaEstu?.grupoMatricula?.map(
+            (item) => item.grup_matr_idGrup
+          ) || [];
+          const horario = await generarHorarioAcademico(idsGrupos);
+          return res.status(200).json(horario);
+        })(),
+        timeout(10000),
+      ]);
     } catch (error) {
+      console.error(error);
       return res
         .status(500)
         .json({ response: "No se pudo obtener el horario del estudiante" });
@@ -482,90 +475,82 @@ class EstudianteDao {
     }
   }
 
-  static async matricularMateria(
-    idEstu: any,
-    idAsignatura: any,
-    idGrup: any,
-    res: Response
-  ) {
+  static async matricularMateria(idEstu: any, idAsignatura: any, idGrup: any, res: Response) {
     try {
-
       const programaEstudiante = await estuProgRepository.findOne({
-        where: {
-          estu_prog_idEstu: idEstu
-        }
-      })
+        where: { estu_prog_idEstu: idEstu },
+      });
+
       const periodoActual = await matrRepository
         .createQueryBuilder("matricula")
         .select("MAX(matricula.matr_periodo)", "peri_id")
         .where("matricula.matr_estudiante = :idEstu", { idEstu })
         .getRawOne();
+
       const idPeriodoActual = periodoActual.peri_id;
 
       const matricula = await matrRepository.findOne({
         where: {
           matr_estudiante: idEstu,
           matr_periodo: idPeriodoActual,
-        } 
+        },
       });
-         
-      
-      
-      const gruposmatriculados= await grupMatrRepository
-      .find({
-         where: {
-            grup_matr_idMatr: matricula?.matr_id,
-         }
-      })
+
+      const gruposmatriculados = await grupMatrRepository.find({
+        where: {
+          grup_matr_idMatr: matricula?.matr_id,
+        },
+      });
 
       const asignaturasMatriculadas = await grupRepository.find({
         where: {
-         grup_id: In(gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)),
-        }
-      })
+          grup_id: In(gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)),
+        },
+      });
 
       const idsAsignaturasMatriculadas = asignaturasMatriculadas.map((asig) => asig.grup_asignatura);
 
-      const creditosMatriculados= await obtenerCreditosAsignaturas(idsAsignaturasMatriculadas);
+      const creditosMatriculados = await obtenerCreditosAsignaturas(idsAsignaturasMatriculadas);
 
-      const asignaturaAux= await progAsigRepository
-      .findOne(
-        {
-          where: {
-          prog_asig_idAsig: idAsignatura,
-          prog_asig_idProg: programaEstudiante?.estu_prog_idProg
-          }
-        }
-      )
-
-      
-      const creditosAsignatura= await asigRepository
-      .findOne({
+      const asignaturaAux = await progAsigRepository.findOne({
         where: {
-          asig_id: asignaturaAux?.prog_asig_idAsig
-        }
-      })
+          prog_asig_idAsig: idAsignatura,
+          prog_asig_idProg: programaEstudiante?.estu_prog_idProg,
+        },
+      });
 
-      if(creditosAsignatura && matricula){
-        if(creditosMatriculados+creditosAsignatura?.asig_creditos>18){
-          res.status(403).json({ response: "La asignatura no se puede matricular porque sobrepasa los creditos permitidos" });
-        }
-        else{
-          const matricular= new GrupoAMatricula();
-          matricular.grup_matr_idGrup=idGrup;
-          matricular.grup_matr_idMatr=matricula.matr_id
-          matricular.grup_matr_estado=false;
-          matricular.grup_matr_nota=0.00;
+      const creditosAsignatura = await asigRepository.findOne({
+        where: {
+          asig_id: asignaturaAux?.prog_asig_idAsig,
+        },
+      });
 
-          await grupMatrRepository.save(matricular);
-
-          return res.status(200).json({ response: "Materia matriculada" });
+      if (creditosAsignatura && matricula) {
+        if (creditosMatriculados + creditosAsignatura?.asig_creditos > 18) {
+          // Respuesta para exceso de créditos
+          return res.status(403).json({
+            response: "La asignatura no se puede matricular porque sobrepasa los créditos permitidos",
+          });
         }
+
+        // Matricular la asignatura
+        const matricular = new GrupoAMatricula();
+        matricular.grup_matr_idGrup = idGrup;
+        matricular.grup_matr_idMatr = matricula.matr_id;
+        matricular.grup_matr_estado = false;
+        matricular.grup_matr_nota = 0.0;
+
+        await grupMatrRepository.save(matricular);
+
+        // Respuesta para éxito
+        return res.status(200).json({ response: "Materia matriculada" });
       }
+
+      // Respuesta genérica de error
       return res.status(500).json({ response: "No se pudo matricular la materia" });
-      
-      
     } catch (error) {
+      console.error(error);
+      // Respuesta para error interno del servidor
       return res.status(500).json({ response: "No se pudo matricular la materia" });
     }
   }
@@ -777,7 +762,6 @@ async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
 }
 
 async function generarHorarioAcademico(ids: number[]) {
-  let indice = 0;
   const rta: MapaHorario = {
     monday: [],
     tuesday: [],
@@ -795,39 +779,41 @@ async function generarHorarioAcademico(ids: number[]) {
 
   for (const day of days) {
     let menor = "00:00";
-    while (menor != "25:00") {
+    const gruposDia = grupos.filter(grupo => grupo.grup_horarioSalon[day]); // Solo grupos con horario para el día actual
+
+    while (menor !== "25:00") {
       let data: Horario | null = null;
-      menor = "25:00";
-      let i = 0;
+      let siguienteMenor = "25:00"; // Inicia con el valor máximo posible
+      let grupoSeleccionadoIndex = -1;
 
-      for (const grupo of grupos) {
-        let horaAux = grupo.grup_horarioSalon[day];
-        // Si hay grupos para ese dia, guarda la hora inicio.
-        // Si no, significa que arroja 'undefined' y se asigna una hora grande
-        // para que se mantenga con el menor actual al momento de comprobar
-        let actual = horaAux ? horaAux.horaInicio : "30:00";
+      for (let i = 0; i < gruposDia.length; i++) {
+        const horaAux = gruposDia[i].grup_horarioSalon[day];
 
-        let fechaMenor = convertirAFecha(menor);
-        let fechaActual = convertirAFecha(actual);
+        if (!horaAux) continue; // Si no hay horario, saltar este grupo
 
-        // Comprueba cual es la menor para almacenar primero
-        if (fechaActual < fechaMenor) {
-          menor = actual;
+        const actual = horaAux.horaInicio || "30:00";
+        const fechaActual = convertirAFecha(actual);
+        const fechaMenor = convertirAFecha(siguienteMenor);
+
+        // Actualizar el siguiente menor si se encuentra un horario válido y menor
+        if (fechaActual >= convertirAFecha(menor) && fechaActual < fechaMenor) {
+          siguienteMenor = actual;
+          grupoSeleccionadoIndex = i;
+
+          // Construir el objeto `data` para el horario
           const asignatura = await asigRepository.findOneBy({
-            asig_id: grupo.grup_asignatura,
+            asig_id: gruposDia[i].grup_asignatura,
           });
           const doceAux = await asigDoceGrupRepository.findOne({
             where: {
               asig_doce_grup_idAsig: asignatura?.asig_id,
-              asig_doce_grup_idGrup: grupo.grup_id,
+              asig_doce_grup_idGrup: gruposDia[i].grup_id,
             },
           });
-
           const usuAux = await usuRepository.findOneBy({
             usu_cod: doceAux?.asig_doce_grup_idDoce,
           });
 
-          // Agregar info provisional
           if (asignatura && doceAux && usuAux) {
             data = {
               name: asignatura.asig_nombre,
@@ -835,38 +821,53 @@ async function generarHorarioAcademico(ids: number[]) {
               hourEnd: convertirAFecha(horaAux.horaFin),
               teacher: usuAux.usu_nombre,
               group: {
-                id: grupo.grup_id,
-                name: grupo.grup_nombre,
+                id: gruposDia[i].grup_id,
+                name: gruposDia[i].grup_nombre,
               },
               room: horaAux.salon,
             };
-            indice = i;
           }
         }
-        i++;
       }
-      // Eliminar grupo para no repetir en las proximas iteraciones
-      delete grupos[indice].grup_horarioSalon[day];
 
-      // agregar el menor al arreglo
-      if (day == "lunes" && data) {
-        rta.monday.push(data);
-      } else if (day == "martes" && data) {
-        rta.tuesday.push(data);
-      } else if (day == "miercoles" && data) {
-        rta.wednesday.push(data);
-      } else if (day == "jueves" && data) {
-        rta.thursday.push(data);
-      } else if (day == "viernes" && data) {
-        rta.friday.push(data);
-      } else if (day == "sabado" && data) {
-        rta.saturday.push(data);
+      // Si no se encontró un siguiente menor válido, romper el bucle
+      if (siguienteMenor === "25:00" || grupoSeleccionadoIndex === -1) {
+        break;
       }
+
+      // Agregar el horario al día correspondiente
+      if (data) {
+        const dayKey = getDayKey(day);
+        rta[dayKey].push(data);
+      }
+
+      // Eliminar el horario procesado del grupo seleccionado
+      delete gruposDia[grupoSeleccionadoIndex].grup_horarioSalon[day];
+
+      // Actualizar `menor` para la siguiente iteración
+      menor = siguienteMenor;
     }
   }
 
   return rta;
 }
+
+function getDayKey(day: string): keyof MapaHorario {
+  const mapping: Record<string, keyof MapaHorario> = {
+    lunes: "monday",
+    martes: "tuesday",
+    miercoles: "wednesday",
+    jueves: "thursday",
+    viernes: "friday",
+    sabado: "saturday",
+  };
+  return mapping[day];
+}
+
+function timeout(ms: number) {
+  return new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms));
+}
+
 function convertirAFecha(hora: string) {
   const [hh, mm] = hora.split(":").map(Number);
   const fecha = new Date();
