@@ -241,14 +241,15 @@ class EstudianteDao {
       const resultado = await Promise.race([
         (async () => {
           // Lógica original del endpoint
-          const estudiante = await estuRepository.findOne({
-            where: { estu_id: idEstu },
-            relations: ["estudiantePrograma"],
-          });
+          // const estudiante = await estuRepository.findOne({
+          //   where: { estu_id: idEstu },
+          //   relations: ["estudiantePrograma"],
+          // });
           const periAux = await periRepository.findOne({
             where: { peri_nombre: "2024-2" },
           });
-          if (!estudiante || !periAux) {
+          // if (!estudiante || !periAux) {
+          if (!periAux) {
             return res.status(404).json({ response: "Datos no encontrados" });
           }
 
@@ -256,9 +257,14 @@ class EstudianteDao {
             where: { matr_estudiante: idEstu, matr_periodo: periAux.peri_id },
             relations: ["grupoMatricula"],
           });
+
+
           const idsGrupos = matriculaEstu?.grupoMatricula?.map(
             (item) => item.grup_matr_idGrup
           ) || [];
+
+          console.log({ idsGrupos });
+
           const horario = await generarHorarioAcademico(idsGrupos);
           return res.status(200).json(horario);
         })(),
@@ -271,6 +277,7 @@ class EstudianteDao {
         .json({ response: "No se pudo obtener el horario del estudiante" });
     }
   }
+
   static async asignaturasValidas(idEstu: any, res: Response) {
     try {
       const periodoActual = await matrRepository
@@ -502,26 +509,26 @@ class EstudianteDao {
         },
       });
 
-      const Grupos= await grupRepository.
-      find({
-        where: {
-          grup_id: In(
-            gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)
-          ),
-        },
-      });
+      const Grupos = await grupRepository.
+        find({
+          where: {
+            grup_id: In(
+              gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)
+            ),
+          },
+        });
 
-      const horariosGrupos= Grupos.map((item) => item.grup_horarioSalon);
+      const horariosGrupos = Grupos.map((item) => item.grup_horarioSalon);
 
-      const Grupo= await grupRepository.
-      findOne({
-        where:{
-          grup_id: idGrup
-        }
-      })
-      const horarioGrupo= Grupo?.grup_horarioSalon
+      const Grupo = await grupRepository.
+        findOne({
+          where: {
+            grup_id: idGrup
+          }
+        })
+      const horarioGrupo = Grupo?.grup_horarioSalon
 
-      if(verificarCruceHorarios(horariosGrupos,horarioGrupo!)){
+      if (verificarCruceHorarios(horariosGrupos, horarioGrupo!)) {
         return res.status(404).json({ response: "Existe un cruce de horarios con otra materia" });
       }
 
@@ -585,20 +592,20 @@ class EstudianteDao {
         .select("MAX(matricula.matr_periodo)", "peri_id")
         .where("matricula.matr_estudiante = :idEstu", { idEstu })
         .getRawOne();
-  
+
       const idPeriodoActual = periodoActual.peri_id;
-  
+
       const matricula = await matrRepository.findOne({
         where: {
           matr_estudiante: idEstu,
           matr_periodo: idPeriodoActual,
         },
       });
-  
+
       if (!matricula) {
         return res.status(404).json({ response: "No se encontró la matrícula para el estudiante en el periodo actual" });
       }
-  
+
       await grupMatrRepository.delete({
         grup_matr_idMatr: matricula?.matr_id,
         grup_matr_idGrup: idGrupAntiguo
@@ -608,18 +615,18 @@ class EstudianteDao {
         grup_matr_idMatr: matricula?.matr_id,
         grup_matr_idGrup: idGrup
       });
-  
+
       await grupMatrRepository.save(nuevoRegistro);
-  
+
       return res.status(200).json({ response: "Grupo cambiado con éxito" });
-  
+
     } catch (error) {
       console.error(error);
       return res.status(500).json({ response: "No se pudo cambiar el grupo" });
     }
   }
-  
-  
+
+
 
   static async eliminarGrupo(idEstu: any, idGrup: any, res: Response) {
     try {
@@ -872,6 +879,7 @@ async function generarHorarioAcademico(ids: number[]) {
   const days = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
   const grupos = await grupRepository.findBy({ grup_id: In(ids) });
 
+
   if (!grupos || grupos.length === 0) {
     return rta;
   }
@@ -884,6 +892,7 @@ async function generarHorarioAcademico(ids: number[]) {
       let data: Horario | null = null;
       let siguienteMenor = "25:00"; // Inicia con el valor máximo posible
       let grupoSeleccionadoIndex = -1;
+
 
       for (let i = 0; i < gruposDia.length; i++) {
         const horaAux = gruposDia[i].grup_horarioSalon[day];
@@ -909,16 +918,21 @@ async function generarHorarioAcademico(ids: number[]) {
               asig_doce_grup_idGrup: gruposDia[i].grup_id,
             },
           });
-          const usuAux = await usuRepository.findOneBy({
-            usu_cod: doceAux?.asig_doce_grup_idDoce,
-          });
 
-          if (asignatura && doceAux && usuAux) {
+          let usuAux = null;
+
+          if (doceAux) {
+            usuAux = await usuRepository.findOneBy({
+              usu_cod: doceAux.asig_doce_grup_idDoce,
+            });
+          }
+
+          if (asignatura) {
             data = {
               name: asignatura.asig_nombre,
               hourStart: fechaActual,
               hourEnd: convertirAFecha(horaAux.horaFin),
-              teacher: usuAux.usu_nombre,
+              teacher: usuAux?.usu_nombre || undefined,
               group: {
                 id: gruposDia[i].grup_id,
                 name: gruposDia[i].grup_nombre,
@@ -977,12 +991,12 @@ function convertirAFecha(hora: string) {
 type HorarioGrupo = {
   [dia: string]: {
     salon: string;
-    horaInicio: string; 
-    horaFin: string;    
+    horaInicio: string;
+    horaFin: string;
   };
 };
 function verificarCruceHorarios(
-  horariosMatriculados: HorarioGrupo[], 
+  horariosMatriculados: HorarioGrupo[],
   horarioNuevo: HorarioGrupo
 ): boolean {
   for (const horarioMatriculado of horariosMatriculados) {
