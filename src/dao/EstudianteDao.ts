@@ -602,6 +602,35 @@ class EstudianteDao {
         },
       });
 
+      const gruposmatriculados = await grupMatrRepository.find({
+        where: {
+          grup_matr_idMatr: matricula?.matr_id,
+        },
+      });
+
+      const Grupos = await grupRepository.
+        find({
+          where: {
+            grup_id: In(
+              gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)
+            ),
+          },
+        });
+
+      const horariosGrupos = Grupos.map((item) => item.grup_horarioSalon);
+
+      const Grupo = await grupRepository.
+        findOne({
+          where: {
+            grup_id: idGrup
+          }
+        })
+      const horarioGrupo = Grupo?.grup_horarioSalon
+
+      if (verificarCruceHorarios(horariosGrupos, horarioGrupo!)) {
+        return res.status(404).json({ response: "Existe un cruce de horarios con otra materia" });
+      }
+
       if (!matricula) {
         return res.status(404).json({ response: "No se encontró la matrícula para el estudiante en el periodo actual" });
       }
