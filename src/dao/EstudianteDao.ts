@@ -521,6 +521,10 @@ class EstudianteDao {
       })
       const horarioGrupo= Grupo?.grup_horarioSalon
 
+      if(verificarCruceHorarios(horariosGrupos,horarioGrupo!)){
+        return res.status(404).json({ response: "Existe un cruce de horarios con otra materia" });
+      }
+
 
 
 
@@ -581,33 +585,41 @@ class EstudianteDao {
         .select("MAX(matricula.matr_periodo)", "peri_id")
         .where("matricula.matr_estudiante = :idEstu", { idEstu })
         .getRawOne();
+  
       const idPeriodoActual = periodoActual.peri_id;
-
+  
       const matricula = await matrRepository.findOne({
         where: {
           matr_estudiante: idEstu,
           matr_periodo: idPeriodoActual,
         },
       });
-      
-
-      const matricular = await grupMatrRepository.findOne({
-        where: {
-          grup_matr_idMatr: matricula?.matr_id,
-          grup_matr_idGrup: idGrupAntiguo
-        },
-      });
-      if (matricular) {
-        matricular.grup_matr_idGrup = idGrup;
-        await grupMatrRepository.save(matricular);
-
-        return res.status(200).json({ response: "grupo cambiado con exito" });
+  
+      if (!matricula) {
+        return res.status(404).json({ response: "No se encontró la matrícula para el estudiante en el periodo actual" });
       }
-      return res.status(500).json({ response: "Hubo un error al cambiar el grupo" });
+  
+      await grupMatrRepository.delete({
+        grup_matr_idMatr: matricula?.matr_id,
+        grup_matr_idGrup: idGrupAntiguo
+      });
+
+      const nuevoRegistro = grupMatrRepository.create({
+        grup_matr_idMatr: matricula?.matr_id,
+        grup_matr_idGrup: idGrup
+      });
+  
+      await grupMatrRepository.save(nuevoRegistro);
+  
+      return res.status(200).json({ response: "Grupo cambiado con éxito" });
+  
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ response: "No se pudo cambiar el grupo" });
     }
   }
+  
+  
 
   static async eliminarGrupo(idEstu: any, idGrup: any, res: Response) {
     try {
@@ -960,6 +972,49 @@ function convertirAFecha(hora: string) {
   const fecha = new Date();
   fecha.setHours(hh, mm, 0, 0);
   return fecha;
+}
+
+type HorarioGrupo = {
+  [dia: string]: {
+    salon: string;
+    horaInicio: string; 
+    horaFin: string;    
+  };
+};
+function verificarCruceHorarios(
+  horariosMatriculados: HorarioGrupo[], 
+  horarioNuevo: HorarioGrupo
+): boolean {
+  for (const horarioMatriculado of horariosMatriculados) {
+    for (const dia in horarioMatriculado) {
+      if (horarioNuevo[dia]) {
+        const horaInicioMatriculado = horarioMatriculado[dia].horaInicio;
+        const horaFinMatriculado = horarioMatriculado[dia].horaFin;
+        const horaInicioNuevo = horarioNuevo[dia].horaInicio;
+        const horaFinNuevo = horarioNuevo[dia].horaFin;
+
+        if (hayCruceHorarios(horaInicioMatriculado, horaFinMatriculado, horaInicioNuevo, horaFinNuevo)) {
+          return true; // Hay cruce de horarios
+        }
+      }
+    }
+  }
+  return false; // No hay cruce de horarios
+}
+
+function hayCruceHorarios(horaInicioA: string, horaFinA: string, horaInicioB: string, horaFinB: string): boolean {
+  const inicioA = convertirHoraEnMinutos(horaInicioA);
+  const finA = convertirHoraEnMinutos(horaFinA);
+  const inicioB = convertirHoraEnMinutos(horaInicioB);
+  const finB = convertirHoraEnMinutos(horaFinB);
+
+  // Validar si hay cruce de horarios
+  return inicioB < finA && finB > inicioA;
+}
+
+function convertirHoraEnMinutos(hora: string): number {
+  const [horas, minutos] = hora.split(':').map(Number);
+  return horas * 60 + minutos;
 }
 
 export default EstudianteDao;
