@@ -578,6 +578,7 @@ async function obtenerPromedioAcumulado(ids: IdsGrupMatr[]) {
     .getRawOne();
 
   return (result.suma / result.creditos).toFixed(2);
+  
 }
 
 async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
@@ -586,6 +587,7 @@ async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
   for (let i = 1; i <= 10; i++) {
     data[i] = [];
   }
+  
 
   for (const Malla of idsAsig) {
     const asignatura = await asigRepository.findOneBy({
@@ -642,6 +644,7 @@ async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
   }
 
   return data;
+  
 }
 
 async function generarHorarioAcademico(ids: number[]) {
@@ -728,10 +731,11 @@ async function generarHorarioAcademico(ids: number[]) {
       }
     }
   }
+      
 
   return rta;
+  
 }
-
 function convertirAFecha(hora: string) {
   const [hh, mm] = hora.split(":").map(Number);
   const fecha = new Date();
