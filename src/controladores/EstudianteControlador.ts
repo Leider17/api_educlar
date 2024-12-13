@@ -23,6 +23,10 @@ export class EstudianteControlador extends EstudianteDao {
    public pagarMatricula(req:Request, res:Response) {
       EstudianteControlador.pagarmatricula(req.params.idEstu, res);
    }
+
+   public matricularMateria(req:Request, res:Response) {
+      EstudianteControlador.matricularMateria(req.params.idEstu, req.params.idGrup, req.params.idMateria, res);
+   }
 }
 
 const estudianteControlador = new EstudianteControlador();

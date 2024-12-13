@@ -7,7 +7,7 @@ import { Matricula } from "../entidades/Matricula";
 import { GrupoAMatricula } from "../entidades/GrupoAMatricula";
 import { Periodo } from "../entidades/Periodo";
 import {
-   Day,
+  Day,
   Horario,
   IdsAsig,
   IdsGrupMatr,
@@ -275,7 +275,7 @@ class EstudianteDao {
     } catch (error) {
       return res
         .status(500)
-        .json({ response: "No se pudo obtener el horario del estudiante" })
+        .json({ response: "No se pudo obtener el horario del estudiante" });
     }
   }
   static async asignaturasValidas(idEstu: any, res: Response) {
@@ -323,20 +323,20 @@ class EstudianteDao {
         },
       });
 
-      const matriculaActual=await matrRepository.findOne({
-         where: {
-           matr_estudiante: idEstu,
-           matr_periodo: idPeriodoActual.peri_id,
-           matr_estadoPago:false
-         },
-       });
+      const matriculaActual = await matrRepository.findOne({
+        where: {
+          matr_estudiante: idEstu,
+          matr_periodo: idPeriodoActual.peri_id,
+          matr_estadoPago: false,
+        },
+      });
 
-       
-      if(matriculaActual){
-         return res.status(404).json({ response: "El estudiante no tiene una matricula pagada" });
+      if (matriculaActual) {
+        return res
+          .status(404)
+          .json({ response: "El estudiante no tiene una matricula pagada" });
       }
-      
-      
+
       const gruposAux = await grupMatrRepository.find({
         where: {
           grup_matr_estado: true,
@@ -439,8 +439,6 @@ class EstudianteDao {
         programa.estu_prog_idProg
       );
 
-
-
       return res.status(200).json(data);
     } catch (error) {
       console.error("Error:", error);
@@ -453,33 +451,122 @@ class EstudianteDao {
 
   static async pagarmatricula(idEstu: any, res: Response) {
     try {
-
       const periodoActual = await matrRepository
         .createQueryBuilder("matricula")
         .select("MAX(matricula.matr_periodo)", "peri_id")
         .where("matricula.matr_estudiante = :idEstu", { idEstu })
         .getRawOne();
       const idPeriodoActual = periodoActual.peri_id;
-      const matricula = await matrRepository
-      .findOne({
-         where:{
-            matr_estudiante:idEstu,
-            matr_periodo:idPeriodoActual,
-            matr_estadoPago:false
-         }
+      const matricula = await matrRepository.findOne({
+        where: {
+          matr_estudiante: idEstu,
+          matr_periodo: idPeriodoActual,
+          matr_estadoPago: false,
+        },
       });
-      if(!matricula){
-        return res.status(404).json({response:"El estudiante ya tiene paga la matricula"});
+      if (!matricula) {
+        return res
+          .status(404)
+          .json({ response: "El estudiante ya tiene paga la matricula" });
       }
 
       matricula.matr_estadoPago = true;
 
       await matrRepository.save(matricula);
 
-      return res.status(200).json({response:"Matricula pagada"});
+      return res.status(200).json({ response: "Matricula pagada" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ response: "No se pudo pagar la matricula" });
     }
-    catch (error) {
-      return res.status(500).json({ response: "No se pudo pagar la matricula" });
+  }
+
+  static async matricularMateria(
+    idEstu: any,
+    idGrup: any,
+    idAsignatura: any,
+    res: Response
+  ) {
+    try {
+
+      const programaEstudiante = await estuProgRepository.findOne({
+        where: {
+          estu_prog_idEstu: idEstu
+        }
+      })
+      const periodoActual = await matrRepository
+        .createQueryBuilder("matricula")
+        .select("MAX(matricula.matr_periodo)", "peri_id")
+        .where("matricula.matr_estudiante = :idEstu", { idEstu })
+        .getRawOne();
+      const idPeriodoActual = periodoActual.peri_id;
+
+      const matricula = await matrRepository.findOne({
+        where: {
+          matr_estudiante: idEstu,
+          matr_periodo: idPeriodoActual,
+        } 
+      });
+         
+      
+      
+      const gruposmatriculados= await grupMatrRepository
+      .find({
+         where: {
+            grup_matr_idMatr: matricula?.matr_id,
+         }
+      })
+
+      const asignaturasMatriculadas = await grupRepository.find({
+        where: {
+         grup_id: In(gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)),
+        }
+      })
+
+      const idsAsignaturasMatriculadas = asignaturasMatriculadas.map((asig) => asig.grup_asignatura);
+
+      const creditosMatriculados= await obtenerCreditosAsignaturas(idsAsignaturasMatriculadas);
+
+      const asignaturaAux= await progAsigRepository
+      .findOne(
+        {
+          where: {
+          prog_asig_idAsig: idAsignatura,
+          prog_asig_idProg: programaEstudiante?.estu_prog_idProg
+          }
+        }
+      )
+
+      
+      const creditosAsignatura= await asigRepository
+      .findOne({
+        where: {
+          asig_id: asignaturaAux?.prog_asig_idAsig
+        }
+      })
+
+      if(creditosAsignatura && matricula){
+        if(creditosMatriculados+creditosAsignatura?.asig_creditos>18){
+          res.status(403).json({ response: "La asignatura no se puede matricular porque sobrepasa los creditos permitidos" });
+        }
+        else{
+          const matricular= new GrupoAMatricula();
+          matricular.grup_matr_idGrup=idGrup;
+          matricular.grup_matr_idMatr=matricula.matr_id
+          matricular.grup_matr_estado=false;
+          matricular.grup_matr_nota=0.00;
+
+          await grupMatrRepository.save(matricular);
+
+          return res.status(200).json({ response: "Materia matriculada" });
+        }
+      }
+      return res.status(500).json({ response: "No se pudo matricular la materia" });
+      
+      
+    } catch (error) {
+      return res.status(500).json({ response: "No se pudo matricular la materia" });
     }
   }
 }
@@ -491,9 +578,8 @@ async function obtenerAsignaturas(
   idEstudiante: any,
   programaId: any
 ) {
+  const resultado: Subject[] = [];
 
-   const resultado: Subject[] = [];
-   
   for (const asig of asignaturasFinal) {
     let obligatorio = false;
     let matriculada = false;
@@ -532,52 +618,47 @@ async function obtenerAsignaturas(
     const grupos = await grupRepository.find({
       where: { grup_asignatura: asig.asig_id },
     });
-    let resultadoGrupo=[];
+    let resultadoGrupo = [];
     for (const grupo of grupos) {
       let grupoMatriculado = false;
       let dias = grupo.grup_horarioSalon;
 
-   
       if (gruposMatricula.some((gm) => gm.grup_matr_idGrup === grupo.grup_id)) {
-         grupoMatriculado = true;
+        grupoMatriculado = true;
       }
-      let resultadoDia=[];
+      let resultadoDia = [];
       for (const key in dias) {
         let dia = key;
         let inicio = convertirAFecha(dias[key].horaInicio);
         let fin = convertirAFecha(dias[key].horaFin);
 
         resultadoDia.push({
-         date: dia,
-         hourStart: inicio,
-         hourEnd: fin
+          date: dia,
+          hourStart: inicio,
+          hourEnd: fin,
         });
       }
-       resultadoGrupo.push({
+      resultadoGrupo.push({
         id: String(grupo.grup_id),
         name: grupo.grup_nombre,
         days: resultadoDia,
-        isSelected: grupoMatriculado
-      })
-
-      
+        isSelected: grupoMatriculado,
+      });
     }
-    if(semestre){
+    if (semestre) {
       resultado.push({
-         id: String(asig.asig_id),
-         name: asig.asig_nombre,
-         semester: semestre.prog_asig_semestre,
-         credits: asig.asig_creditos,
-         isObligatory: obligatorio,
-         isEnrolled: matriculada,
-         groups: resultadoGrupo
-        })
+        id: String(asig.asig_id),
+        name: asig.asig_nombre,
+        semester: semestre.prog_asig_semestre,
+        credits: asig.asig_creditos,
+        isObligatory: obligatorio,
+        isEnrolled: matriculada,
+        groups: resultadoGrupo,
+      });
     }
-    
   }
 
-  return resultado
-  
+  return resultado;
 }
 
 async function obtenerMateriasPrerequisito(
@@ -629,7 +710,6 @@ async function obtenerPromedioAcumulado(ids: IdsGrupMatr[]) {
     .getRawOne();
 
   return (result.suma / result.creditos).toFixed(2);
-  
 }
 
 async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
@@ -638,7 +718,6 @@ async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
   for (let i = 1; i <= 10; i++) {
     data[i] = [];
   }
-  
 
   for (const Malla of idsAsig) {
     const asignatura = await asigRepository.findOneBy({
@@ -695,7 +774,6 @@ async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
   }
 
   return data;
-  
 }
 
 async function generarHorarioAcademico(ids: number[]) {
@@ -786,10 +864,8 @@ async function generarHorarioAcademico(ids: number[]) {
       }
     }
   }
-      
 
   return rta;
-  
 }
 function convertirAFecha(hora: string) {
   const [hh, mm] = hora.split(":").map(Number);
