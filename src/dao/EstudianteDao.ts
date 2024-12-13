@@ -248,6 +248,8 @@ class EstudianteDao {
 
       return res.status(200).json(horario);
     } catch (error) {
+      console.log(error)
+
       return res.status(500).json({ response: 'No se pudo obtener el horario del estudiante' });
     }
   }
@@ -352,6 +354,9 @@ async function generarHorarioAcademico(ids: number[]) {
   const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
   const grupos = await grupRepository.findBy({ grup_id: In(ids) });
 
+  if (!grupos || grupos.length === 0) {
+    return rta;
+  }
 
   for (const day of days) {
     let menor = "00:00"
