@@ -106,7 +106,10 @@ INSERT INTO periodos(peri_nombre,"peri_precioSeguro","peri_precioTimbre","peri_p
 		   ('2024-2', 18000, 35000, 10000);
 
 INSERT INTO grupos(grup_asignatura,grup_nombre,"grup_horarioSalon")
-	VALUES (167396, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}'),
+	VALUES (167418, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}');
+
+INSERT INTO grupos(grup_asignatura,grup_nombre,"grup_horarioSalon")
+	VALUES (167396, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
 		   (157402, 'A','{ "martes": {"salon": "SVR 201", "horaInicio": "08:00", "horaFin": "08:59"}, "miercoles": {"salon": "SVR 201", "horaInicio": "09:00", "horaFin": "11:59"}}'),
 		   (157402, 'B','{ "jueves": {"salon": "SVR 203", "horaInicio": "14:00", "horaFin": "15:59"}, "sabado": {"salon": "SVR 223", "horaInicio": "08:00", "horaFin": "09:59"}}'),
 		   (157406, 'A','{ "martes": {"salon": "ER 207", "horaInicio": "10:00", "horaFin": "11:59"}, "jueves": {"salon": "ER 207", "horaInicio": "18:00", "horaFin": "18:59"}}'),
@@ -123,48 +126,47 @@ INSERT INTO grupos(grup_asignatura,grup_nombre,"grup_horarioSalon")
 		   (167415, 'A','{ "lunes": {"salon": "MD 108", "horaInicio": "14:00", "horaFin": "15:59"}, "viernes": {"salon": "MD 108", "horaInicio": "08:00", "horaFin": "09:59"}}'),
 		   (167417, 'A','{ "miercoles": {"salon": "FJ 101", "horaInicio": "08:00", "horaFin": "09:59"}, "jueves": {"salon": "FJ 101", "horaInicio": "10:00", "horaFin": "11:59"}}'),
 		   (167416, 'A','{ "martes": {"salon": "AULA TIC", "horaInicio": "14:00", "horaFin": "15:59"}, "viernes": {"salon": "AULA TIC", "horaInicio": "12:00", "horaFin": "13:59"}}'),
-		   (167390, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167391, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (162003, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (153002, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (157408, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167389, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (171342, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (162274, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167392, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (157400, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (164004, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167393, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (164335, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (150001, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (162275, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167394, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (157401, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (157405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (150002, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (162276, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (157403, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167398, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167399, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167400, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167402, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167403, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167404, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
-		   (167405, 'A','{ "lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}');
-
+		   (167390, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167391, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (162003, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (153002, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (157408, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167389, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (171342, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (162274, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167392, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (157400, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (164004, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167393, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (164335, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (150001, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (162275, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167394, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (157401, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (157405, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (150002, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (162276, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (157403, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167398, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167399, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167400, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167402, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167403, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167404, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167405, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167406, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (200001, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167407, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167408, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167409, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167410, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (200002, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167411, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167412, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167413, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (167414, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}'),
+		   (200003, 'A','{"lunes": {"salon": "FJ 103", "horaInicio": "10:00", "horaFin": "11:59"}, "miercoles": {"salon": "FJ 103", "horaInicio": "14:00", "horaFin": "15:59"}}');
+		   
 INSERT INTO matriculas(matr_periodo,matr_estudiante,"matr_costoFinal","matr_estadoPago","matr_costoTotal")
 	VALUES (1,1092344838,148000,'true','{ "Derechos de matricula": 900000, "Descuento de": -900000, "Derechos complementarios": 100000, "Timbre pro cultura": 12000, "Seguro estudiantil": 30000, "Fondo capital semilla": 6000, "Subtotal": 1048000, "Total": 148000}'),
 		   (2,1092344838,148000,'true','{ "Derechos de matricula": 900000, "Descuento de": -900000, "Derechos complementarios": 100000, "Timbre pro cultura": 12000, "Seguro estudiantil": 30000, "Fondo capital semilla": 6000, "Subtotal": 1048000, "Total": 148000}'),
@@ -173,11 +175,11 @@ INSERT INTO matriculas(matr_periodo,matr_estudiante,"matr_costoFinal","matr_esta
 		   (5,1092344838,159000,'true','{ "Derechos de matricula": 900000, "Descuento de": -900000, "Derechos complementarios": 100000, "Timbre pro cultura": 16000, "Seguro estudiantil": 33000, "Fondo capital semilla": 10000, "Subtotal": 1059000, "Total": 159000}'),
 		   (6,1092344838,159000,'true','{ "Derechos de matricula": 900000, "Descuento de": -900000, "Derechos complementarios": 100000, "Timbre pro cultura": 16000, "Seguro estudiantil": 33000, "Fondo capital semilla": 10000, "Subtotal": 1059000, "Total": 159000}'),
 		   (7,1092344838,163000,'true','{ "Derechos de matricula": 900000, "Descuento de": -900000, "Derechos complementarios": 100000, "Timbre pro cultura": 18000, "Seguro estudiantil": 35000, "Fondo capital semilla": 10000, "Subtotal": 1063000, "Total": 163000}'),
-		   (8,1092344838,167000,'true{ "Derechos de matricula": 1820000, "Descuento de": -1820000, "Derechos complementarios": 104000, "Timbre pro cultura": 18000, "Seguro estudiantil": 35000, "Fondo capital semilla": 10000, "Subtotal": 1987000, "Total": 167000}'),
+		   (8,1092344838,167000,'true','{ "Derechos de matricula": 1820000, "Descuento de": -1820000, "Derechos complementarios": 104000, "Timbre pro cultura": 18000, "Seguro estudiantil": 35000, "Fondo capital semilla": 10000, "Subtotal": 1987000, "Total": 167000}'),
 		   (5,1006409535,789000,'true','{ "Derechos de matricula": 900000, "Descuento de": -270000, "Derechos complementarios": 100000, "Timbre pro cultura": 16000, "Seguro estudiantil": 33000, "Fondo capital semilla": 10000, "Subtotal": 1059000, "Total": 789000}'),
 		   (6,1006409535,789000,'true','{ "Derechos de matricula": 900000, "Descuento de": -270000, "Derechos complementarios": 100000, "Timbre pro cultura": 16000, "Seguro estudiantil": 33000, "Fondo capital semilla": 10000, "Subtotal": 1059000, "Total": 789000}'),
 		   (7,1006409535,793000,'true','{ "Derechos de matricula": 900000, "Descuento de": -270000, "Derechos complementarios": 100000, "Timbre pro cultura": 18000, "Seguro estudiantil": 35000, "Fondo capital semilla": 10000, "Subtotal": 1063000, "Total": 793000}'),
-		   (8,1006409535,1441000,'false "Derechos de matricula": 1820000, "Descuento de": -546000, "Derechos complementarios": 104000, "Timbre pro cultura": 18000, "Seguro estudiantil": 35000, "Fondo capital semilla": 10000, "Subtotal": 1987000, "Total": 1441000}');
+		   (8,1006409535,1441000,'false','{ "Derechos de matricula": 1820000, "Descuento de": -546000, "Derechos complementarios": 104000, "Timbre pro cultura": 18000, "Seguro estudiantil": 35000, "Fondo capital semilla": 10000, "Subtotal": 1987000, "Total": 1441000}');
 
 
 -- TABLAS INTERMEDIAS
@@ -331,13 +333,6 @@ INSERT INTO grupos_matriculas
 		   (10, 11, 'false', 2.54),
 		   (36, 11, 'true', 4.30),
 		   (37, 11, 'true', 3.70);
-
-
-INSERT INTO grupos_matriculas		--Eliminar luego de acabar el semaforo
-	VALUES (15,8,'false',0.00),
-		   (16,8,'false',0.00),
-		   (17,8,'false',0.00),
-		   (14,8,'false',0.00);
 
 SELECT * FROM usuarios;
 SELECT * FROM estudiantes;
