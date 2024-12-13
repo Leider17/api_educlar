@@ -34,3 +34,27 @@ export interface MapaHorario {
    friday: Horario[]
    saturday: Horario[]
 }
+
+export interface Day {
+   date: string
+   hourStart: Date
+   hourEnd: Date
+ }
+ 
+ export interface Group {
+   id: string
+   name: string
+   days: Day[]
+   isSelected?: boolean
+ }
+ 
+ export interface Subject {
+   id: string
+   name: string
+   semester: number
+   credits: number
+   isObligatory: boolean
+   isEnrolled?: boolean
+   groups: Group[]
+ }
+ 

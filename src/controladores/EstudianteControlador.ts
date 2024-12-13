@@ -16,6 +16,9 @@ export class EstudianteControlador extends EstudianteDao {
    public getHorario(req:Request, res:Response) {
       EstudianteControlador.horario(req.params.idEstu, res);
    }
+   public getMateriasValidas(req:Request, res:Response) {
+      EstudianteControlador.asignaturasValidas(req.params.idEstu, res);
+   }
 }
 
 const estudianteControlador = new EstudianteControlador();

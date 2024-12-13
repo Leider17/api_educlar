@@ -14,6 +14,7 @@ class EstudianteRuta {
       this.ApiRoute.get("/semaforo/:idEstu", estudianteControlador.getSemaforo);
       this.ApiRoute.get("/matriculaPagos/:idEstu", estudianteControlador.getMatricula);
       this.ApiRoute.get("/horario/:idEstu", estudianteControlador.getHorario);
+      this.ApiRoute.get("/materiasValidas/:idEstu", estudianteControlador.getMateriasValidas);
    }
 }
 
