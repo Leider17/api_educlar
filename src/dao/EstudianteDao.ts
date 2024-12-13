@@ -478,8 +478,8 @@ class EstudianteDao {
   static async matricularMateria(idEstu: any, idAsignatura: any, idGrup: any, res: Response) {
     try {
       const programaEstudiante = await estuProgRepository.findOne({
-        where: { estu_prog_idEstu: idEstu, },
-      });;
+        where: { estu_prog_idEstu: idEstu },
+      });
 
       const periodoActual = await matrRepository
         .createQueryBuilder("matricula")
@@ -493,7 +493,7 @@ class EstudianteDao {
         where: {
           matr_estudiante: idEstu,
           matr_periodo: idPeriodoActual,
-        } 
+        },
       });
 
       const gruposmatriculados = await grupMatrRepository.find({
@@ -512,9 +512,7 @@ class EstudianteDao {
         (asig) => asig.grup_asignatura
       );
 
-      const creditosMatriculados = await obtenerCreditosAsignaturas(
-        idsAsignaturasMatriculadas
-      );
+      const creditosMatriculados = await obtenerCreditosAsignaturas(idsAsignaturasMatriculadas);
 
       const asignaturaAux = await progAsigRepository.findOne({
         where: {
@@ -531,29 +529,25 @@ class EstudianteDao {
 
       if (creditosAsignatura && matricula) {
         if (creditosMatriculados + creditosAsignatura?.asig_creditos > 18) {
-          res.status(403).json({
-            response:
-              "La asignatura no se puede matricular porque sobrepasa los creditos permitidos",
+          return res.status(403).json({
+            response: "La asignatura no se puede matricular porque sobrepasa los créditos permitidos",
           });
-        } else {
-          const matricular = new GrupoAMatricula();
-          matricular.grup_matr_idGrup = idGrup;
-          matricular.grup_matr_idMatr = matricula.matr_id;
-          matricular.grup_matr_estado = false;
-          matricular.grup_matr_nota = 0.0;
-
-          await grupMatrRepository.save(matricular);
-
-          return res.status(200).json({ response: "Materia matriculada" });
         }
+
+        const matricular = new GrupoAMatricula();
+        matricular.grup_matr_idGrup = idGrup;
+        matricular.grup_matr_idMatr = matricula.matr_id;
+        matricular.grup_matr_estado = false;
+        matricular.grup_matr_nota = 0.0;
+
+        await grupMatrRepository.save(matricular);
+
+        return res.status(200).json({ response: "Materia matriculada" });
       }
-      return res
-        .status(500)
-        .json({ response: "No se pudo matricular la materia" });
+
+      return res.status(500).json({ response: "No se pudo matricular la materia" });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ response: "No se pudo matricular la materia" });
+      return res.status(500).json({ response: "No se pudo matricular la materia" });
     }
   }
 
@@ -585,7 +579,7 @@ class EstudianteDao {
 
         return res.status(200).json({ response: "grupo cambiado con exito" });
       }
-      return res.status(500).json({ response: "No se pudo cambiar el grupo" });
+      return res.status(500).json({ response: "Hubo un error al cambiar el grupo" });
     } catch (error) {
       return res.status(500).json({ response: "No se pudo cambiar el grupo" });
     }
