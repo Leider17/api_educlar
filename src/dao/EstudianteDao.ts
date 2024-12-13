@@ -489,12 +489,11 @@ class EstudianteDao {
     res: Response
   ) {
     try {
-
       const programaEstudiante = await estuProgRepository.findOne({
         where: {
-          estu_prog_idEstu: idEstu
-        }
-      })
+          estu_prog_idEstu: idEstu,
+        },
+      });
       const periodoActual = await matrRepository
         .createQueryBuilder("matricula")
         .select("MAX(matricula.matr_periodo)", "peri_id")
@@ -506,67 +505,136 @@ class EstudianteDao {
         where: {
           matr_estudiante: idEstu,
           matr_periodo: idPeriodoActual,
-        } 
+        },
       });
-         
-      
-      
-      const gruposmatriculados= await grupMatrRepository
-      .find({
-         where: {
-            grup_matr_idMatr: matricula?.matr_id,
-         }
-      })
+
+      const gruposmatriculados = await grupMatrRepository.find({
+        where: {
+          grup_matr_idMatr: matricula?.matr_id,
+        },
+      });
 
       const asignaturasMatriculadas = await grupRepository.find({
         where: {
-         grup_id: In(gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)),
-        }
-      })
+          grup_id: In(
+            gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)
+          ),
+        },
+      });
 
-      const idsAsignaturasMatriculadas = asignaturasMatriculadas.map((asig) => asig.grup_asignatura);
+      const idsAsignaturasMatriculadas = asignaturasMatriculadas.map(
+        (asig) => asig.grup_asignatura
+      );
 
-      const creditosMatriculados= await obtenerCreditosAsignaturas(idsAsignaturasMatriculadas);
+      const creditosMatriculados = await obtenerCreditosAsignaturas(
+        idsAsignaturasMatriculadas
+      );
 
-      const asignaturaAux= await progAsigRepository
-      .findOne(
-        {
-          where: {
-          prog_asig_idAsig: idAsignatura,
-          prog_asig_idProg: programaEstudiante?.estu_prog_idProg
-          }
-        }
-      )
-
-      
-      const creditosAsignatura= await asigRepository
-      .findOne({
+      const asignaturaAux = await progAsigRepository.findOne({
         where: {
-          asig_id: asignaturaAux?.prog_asig_idAsig
-        }
-      })
+          prog_asig_idAsig: idAsignatura,
+          prog_asig_idProg: programaEstudiante?.estu_prog_idProg,
+        },
+      });
 
-      if(creditosAsignatura && matricula){
-        if(creditosMatriculados+creditosAsignatura?.asig_creditos>18){
-          res.status(403).json({ response: "La asignatura no se puede matricular porque sobrepasa los creditos permitidos" });
-        }
-        else{
-          const matricular= new GrupoAMatricula();
-          matricular.grup_matr_idGrup=idGrup;
-          matricular.grup_matr_idMatr=matricula.matr_id
-          matricular.grup_matr_estado=false;
-          matricular.grup_matr_nota=0.00;
+      const creditosAsignatura = await asigRepository.findOne({
+        where: {
+          asig_id: asignaturaAux?.prog_asig_idAsig,
+        },
+      });
+
+      if (creditosAsignatura && matricula) {
+        if (creditosMatriculados + creditosAsignatura?.asig_creditos > 18) {
+          res.status(403).json({
+            response:
+              "La asignatura no se puede matricular porque sobrepasa los creditos permitidos",
+          });
+        } else {
+          const matricular = new GrupoAMatricula();
+          matricular.grup_matr_idGrup = idGrup;
+          matricular.grup_matr_idMatr = matricula.matr_id;
+          matricular.grup_matr_estado = false;
+          matricular.grup_matr_nota = 0.0;
 
           await grupMatrRepository.save(matricular);
 
           return res.status(200).json({ response: "Materia matriculada" });
         }
       }
-      return res.status(500).json({ response: "No se pudo matricular la materia" });
-      
-      
+      return res
+        .status(500)
+        .json({ response: "No se pudo matricular la materia" });
     } catch (error) {
-      return res.status(500).json({ response: "No se pudo matricular la materia" });
+      return res
+        .status(500)
+        .json({ response: "No se pudo matricular la materia" });
+    }
+  }
+
+  static async cambiarGrupo(idEstu: any, idGrup: any, res: Response) {
+    try {
+      const periodoActual = await matrRepository
+        .createQueryBuilder("matricula")
+        .select("MAX(matricula.matr_periodo)", "peri_id")
+        .where("matricula.matr_estudiante = :idEstu", { idEstu })
+        .getRawOne();
+      const idPeriodoActual = periodoActual.peri_id;
+
+      const matricula = await matrRepository.findOne({
+        where: {
+          matr_estudiante: idEstu,
+          matr_periodo: idPeriodoActual,
+        },
+      });
+
+      const matricular = await grupMatrRepository.findOne({
+        where: {
+          grup_matr_idMatr: matricula?.matr_id,
+          grup_matr_idGrup: idGrup,
+        },
+      });
+      if (matricular) {
+        matricular.grup_matr_idGrup = idGrup;
+        await grupMatrRepository.save(matricular);
+
+        return res.status(200).json({ response: "Matricula pagada" });
+      }
+      return res.status(500).json({ response: "No se pudo cambiar el grupo" });
+    } catch (error) {
+      return res.status(500).json({ response: "No se pudo cambiar el grupo" });
+    }
+  }
+
+  static async eliminarGrupo(idEstu: any, idGrup: any, res: Response) {
+    try {
+      const periodoActual = await matrRepository
+        .createQueryBuilder("matricula")
+        .select("MAX(matricula.matr_periodo)", "peri_id")
+        .where("matricula.matr_estudiante = :idEstu", { idEstu })
+        .getRawOne();
+      const idPeriodoActual = periodoActual.peri_id;
+
+      const matricula = await matrRepository.findOne({
+        where: {
+          matr_estudiante: idEstu,
+          matr_periodo: idPeriodoActual,
+        },
+      });
+      const matriculaaEliminar = await grupMatrRepository.findOne({
+        where: {
+          grup_matr_idMatr: matricula?.matr_id,
+          grup_matr_idGrup: idGrup,
+        },
+      });
+
+      if (matriculaaEliminar) {
+        await grupMatrRepository.remove(matriculaaEliminar);
+        return res.status(200).json({ response: "Grupo eliminado" });
+      } else {
+        return res.status(404).json({ response: "No existe el grupo" });
+      }
+    } catch (error) {
+      return res.status(500).json({ response: "No se pudo eliminar el grupo" });
     }
   }
 }

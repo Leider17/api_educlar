@@ -17,6 +17,8 @@ class EstudianteRuta {
       this.ApiRoute.get("/materiasValidas/:idEstu", estudianteControlador.getMateriasValidas);
       this.ApiRoute.put("/pagarMatricula/:idEstu", estudianteControlador.pagarMatricula);
       this.ApiRoute.post("/matricularMateria/:idEstu", estudianteControlador.matricularMateria);
+      this.ApiRoute.put("/cambiarGrupo/:idEstu", estudianteControlador.cambiarGrupo);
+      this.ApiRoute.delete("/eliminarGrupo/:idEstu", estudianteControlador.eliminarGrupo);
    }
 }
 
