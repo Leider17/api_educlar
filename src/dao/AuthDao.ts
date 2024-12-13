@@ -52,7 +52,8 @@ export class AuthDao {
             id: usuario.usu_cod,
             name: usuario.usu_nombre,
             email: usuario.usu_correo,
-            role: usuario.usu_rol
+            role: usuario.usu_rol,
+            image: usuario.usu_imagenPerfil
           }
         }
       });

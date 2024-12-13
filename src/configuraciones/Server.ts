@@ -35,6 +35,7 @@ class Server {
     this.app.use("/descuentos", apiDescuentoRuta);
     this.app.use("/estudiantes", apiEstudianteRuta);
     this.app.use("/auth", apiAuthRoute);
+    this.app.use('/imagenes', express.static('public/imagenes'));
   }
 
   public async startServer() {
