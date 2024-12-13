@@ -597,7 +597,7 @@ class EstudianteDao {
         matricular.grup_matr_idGrup = idGrup;
         await grupMatrRepository.save(matricular);
 
-        return res.status(200).json({ response: "Matricula pagada" });
+        return res.status(200).json({ response: "grupo cambiado con exito" });
       }
       return res.status(500).json({ response: "No se pudo cambiar el grupo" });
     } catch (error) {
@@ -844,96 +844,96 @@ async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
   return data;
 }
 
-async function generarHorarioAcademico(ids: number[]) {
-  let indice = 0;
-  const rta: MapaHorario = {
-    monday: [],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-    saturday: [],
-  };
-  const days = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
-  const grupos = await grupRepository.findBy({ grup_id: In(ids) });
-
-  if (!grupos || grupos.length === 0) {
-    return rta;
-  }
-
-  for (const day of days) {
-    let menor = "00:00";
-    while (menor != "25:00") {
-      let data: Horario | null = null;
-      menor = "25:00";
-      let i = 0;
-
-      for (const grupo of grupos) {
-        let horaAux = grupo.grup_horarioSalon[day];
-        // Si hay grupos para ese dia, guarda la hora inicio.
-        // Si no, significa que arroja 'undefined' y se asigna una hora grande
-        // para que se mantenga con el menor actual al momento de comprobar
-        let actual = horaAux ? horaAux.horaInicio : "30:00";
-
-        let fechaMenor = convertirAFecha(menor);
-        let fechaActual = convertirAFecha(actual);
-
-        // Comprueba cual es la menor para almacenar primero
-        if (fechaActual < fechaMenor) {
-          menor = actual;
-          const asignatura = await asigRepository.findOneBy({
-            asig_id: grupo.grup_asignatura,
-          });
-          const doceAux = await asigDoceGrupRepository.findOne({
-            where: {
-              asig_doce_grup_idAsig: asignatura?.asig_id,
-              asig_doce_grup_idGrup: grupo.grup_id,
-            },
-          });
-
-          const usuAux = await usuRepository.findOneBy({
-            usu_cod: doceAux?.asig_doce_grup_idDoce,
-          });
-
-          // Agregar info provisional
-          if (asignatura && doceAux && usuAux) {
-            data = {
-              name: asignatura.asig_nombre,
-              hourStart: fechaActual,
-              hourEnd: convertirAFecha(horaAux.horaFin),
-              teacher: usuAux.usu_nombre,
-              group: {
-                id: grupo.grup_id,
-                name: grupo.grup_nombre,
-              },
-              room: horaAux.salon,
-            };
-            indice = i;
-          }
-        }
-        i++;
+async function generarHorarioAcademico(ids:number[]) {
+   let indice = 0;
+   let data = {
+      name: "",
+      hourStart: new Date(),
+      hourEnd: new Date(),
+      teacher: "",
+      group: {
+         id: 0,
+         name: ""
+      },
+      room: ""
+   }
+   const rta: MapaHorario = {
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+      saturday: []
+   };
+   const days = ['lunes','martes','miercoles','jueves','viernes','sabado'];
+   const grupos = await grupRepository.findBy({ grup_id: In(ids) });
+   for(const day of days){
+      let menor = "00:00"
+      while(menor != "25:00"){
+         menor = "25:00"
+         let i = 0
+         for(const grupo of grupos){
+            console.log(grupo.grup_horarioSalon)
+            //console.log(i)
+            //console.log(indice)
+            //console.log(day)
+            let horaAux = grupo.grup_horarioSalon[day]
+            // Si hay grupos para ese dia, guarda la hora inicio.
+            // Si no, significa que arroja 'undefined' y se asigna una hora grande
+            // para que se mantenga con el menor actual al momento de comprobar
+            let actual = horaAux ? horaAux.horaInicio:"30:00";
+            let fechaMenor = convertirAFecha(menor);
+            let fechaActual = convertirAFecha(actual);
+            
+            // Comprueba cual es la menor para almacenar primero
+            if(fechaActual < fechaMenor){
+               menor = actual
+               const asignatura = await asigRepository.findOneBy({ asig_id:grupo.grup_asignatura })
+               const doceAux = await asigDoceGrupRepository.findOne({
+                  where: {
+                     asig_doce_grup_idAsig:asignatura?.asig_id,
+                     asig_doce_grup_idGrup:grupo.grup_id
+                  }
+               })
+               
+               const usuAux = await usuRepository.findOneBy({ usu_cod:doceAux?.asig_doce_grup_idDoce })
+               // Agregar info provisional
+               if(asignatura && doceAux && usuAux){
+                  data = {
+                     name: asignatura.asig_nombre,
+                     hourStart: fechaActual,
+                     hourEnd: convertirAFecha(horaAux.horaFin),
+                     teacher: usuAux.usu_nombre,
+                     group: {
+                        id: grupo.grup_id,
+                        name: grupo.grup_nombre
+                     },
+                     room: horaAux.salon
+                  }
+                  indice = i;
+               }
+            }
+            i++;
+         }
+         // Eliminar grupo para no repetir en las proximas iteraciones
+         delete grupos[indice].grup_horarioSalon[day]
+         // agregar el menor al arreglo
+         if(day == "lunes" && menor != "25:00"){
+            rta.monday.push(data);
+         } else if (day == "martes" && menor != "25:00"){
+            rta.tuesday.push(data);
+         } else if (day == "miercoles" && menor != "25:00"){
+            rta.wednesday.push(data);
+         } else if (day == "jueves" && menor != "25:00"){
+            rta.thursday.push(data);
+         } else if (day == "viernes" && menor != "25:00"){
+            rta.friday.push(data);
+         } else if (day == "sabado" && menor != "25:00"){
+            rta.saturday.push(data);
+         }
       }
-      // Eliminar grupo para no repetir en las proximas iteraciones
-      delete grupos[indice].grup_horarioSalon[day];
-
-      // agregar el menor al arreglo
-      if (day == "lunes" && data) {
-        rta.monday.push(data);
-      } else if (day == "martes" && data) {
-        rta.tuesday.push(data);
-      } else if (day == "miercoles" && data) {
-        rta.wednesday.push(data);
-      } else if (day == "jueves" && data) {
-        rta.thursday.push(data);
-      } else if (day == "viernes" && data) {
-        rta.friday.push(data);
-      } else if (day == "sabado" && data) {
-        rta.saturday.push(data);
-      }
-    }
-  }
-
-  return rta;
+   }
+   return rta;
 }
 function convertirAFecha(hora: string) {
   const [hh, mm] = hora.split(":").map(Number);
