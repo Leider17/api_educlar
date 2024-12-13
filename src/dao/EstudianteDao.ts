@@ -514,6 +514,29 @@ class EstudianteDao {
         },
       });
 
+      const Grupos= await grupRepository.
+      find({
+        where: {
+          grup_id: In(
+            gruposmatriculados.map((grupMatr) => grupMatr.grup_matr_idGrup)
+          ),
+        },
+      });
+
+      const horariosGrupos= Grupos.map((item) => item.grup_horarioSalon);
+
+      const Grupo= await grupRepository.
+      findOne({
+        where:{
+          grup_id: idGrup
+        }
+      })
+      const horarioGrupo= Grupo?.grup_horarioSalon
+
+
+
+
+
       const asignaturasMatriculadas = await grupRepository.find({
         where: {
           grup_id: In(
@@ -571,7 +594,7 @@ class EstudianteDao {
     }
   }
 
-  static async cambiarGrupo(idEstu: any, idGrup: any, res: Response) {
+  static async cambiarGrupo(idEstu: any, idGrup: any, idGrupAntiguo: any, res: Response) {
     try {
       const periodoActual = await matrRepository
         .createQueryBuilder("matricula")
@@ -586,11 +609,12 @@ class EstudianteDao {
           matr_periodo: idPeriodoActual,
         },
       });
+      
 
       const matricular = await grupMatrRepository.findOne({
         where: {
           grup_matr_idMatr: matricula?.matr_id,
-          grup_matr_idGrup: idGrup,
+          grup_matr_idGrup: idGrupAntiguo
         },
       });
       if (matricular) {
