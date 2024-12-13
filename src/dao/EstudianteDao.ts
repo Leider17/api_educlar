@@ -581,30 +581,36 @@ class EstudianteDao {
         .select("MAX(matricula.matr_periodo)", "peri_id")
         .where("matricula.matr_estudiante = :idEstu", { idEstu })
         .getRawOne();
+  
       const idPeriodoActual = periodoActual.peri_id;
-
+  
       const matricula = await matrRepository.findOne({
         where: {
           matr_estudiante: idEstu,
           matr_periodo: idPeriodoActual,
         },
       });
-      
-
-      const matricular = await grupMatrRepository.findOne({
-        where: {
-          grup_matr_idMatr: matricula?.matr_id,
-          grup_matr_idGrup: idGrupAntiguo
-        },
-      });
-      if (matricular) {
-        matricular.grup_matr_idGrup = idGrup;
-        await grupMatrRepository.save(matricular);
-
-        return res.status(200).json({ response: "grupo cambiado con exito" });
+  
+      if (!matricula) {
+        return res.status(404).json({ response: "No se encontró la matrícula para el estudiante en el periodo actual" });
       }
-      return res.status(500).json({ response: "Hubo un error al cambiar el grupo" });
+  
+      await grupMatrRepository.delete({
+        grup_matr_idMatr: matricula?.matr_id,
+        grup_matr_idGrup: idGrupAntiguo
+      });
+
+      const nuevoRegistro = grupMatrRepository.create({
+        grup_matr_idMatr: matricula?.matr_id,
+        grup_matr_idGrup: idGrup
+      });
+  
+      await grupMatrRepository.save(nuevoRegistro);
+  
+      return res.status(200).json({ response: "Grupo cambiado con éxito" });
+  
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ response: "No se pudo cambiar el grupo" });
     }
   }
