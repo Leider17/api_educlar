@@ -679,6 +679,10 @@ async function generarHorarioAcademico(ids: number[]) {
   const days = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
   const grupos = await grupRepository.findBy({ grup_id: In(ids) });
 
+  if (!grupos || grupos.length === 0) {
+    return rta;
+  }
+
   for (const day of days) {
     let menor = "00:00";
     while (menor != "25:00") {
