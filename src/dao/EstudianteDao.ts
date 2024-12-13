@@ -322,6 +322,21 @@ class EstudianteDao {
           matr_estudiante: idEstu,
         },
       });
+
+      const matriculaActual=await matrRepository.findOne({
+         where: {
+           matr_estudiante: idEstu,
+           matr_periodo: idPeriodoActual.peri_id,
+           matr_estadoPago:false
+         },
+       });
+
+       
+      if(matriculaActual){
+         return res.status(404).json({ response: "El estudiante no tiene una matricula pagada" });
+      }
+      
+      
       const gruposAux = await grupMatrRepository.find({
         where: {
           grup_matr_estado: true,
@@ -424,6 +439,8 @@ class EstudianteDao {
         programa.estu_prog_idProg
       );
 
+
+
       return res.status(200).json(data);
     } catch (error) {
       console.error("Error:", error);
@@ -510,6 +527,8 @@ async function obtenerAsignaturas(
         days: resultadoDia,
         isSelected: grupoMatriculado
       })
+
+      
     }
     if(semestre){
       resultado.push({
