@@ -450,6 +450,38 @@ class EstudianteDao {
       });
     }
   }
+
+  static async pagarmatricula(idEstu: any, res: Response) {
+    try {
+
+      const periodoActual = await matrRepository
+        .createQueryBuilder("matricula")
+        .select("MAX(matricula.matr_periodo)", "peri_id")
+        .where("matricula.matr_estudiante = :idEstu", { idEstu })
+        .getRawOne();
+      const idPeriodoActual = periodoActual.peri_id;
+      const matricula = await matrRepository
+      .findOne({
+         where:{
+            matr_estudiante:idEstu,
+            matr_periodo:idPeriodoActual,
+            matr_estadoPago:false
+         }
+      });
+      if(!matricula){
+        return res.status(404).json({response:"El estudiante ya tiene paga la matricula"});
+      }
+
+      matricula.matr_estadoPago = true;
+
+      await matrRepository.save(matricula);
+
+      return res.status(200).json({response:"Matricula pagada"});
+    }
+    catch (error) {
+      return res.status(500).json({ response: "No se pudo pagar la matricula" });
+    }
+  }
 }
 
 async function obtenerAsignaturas(
