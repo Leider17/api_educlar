@@ -16,7 +16,7 @@ import {
   Subject,
 } from "../utilidades/Interfaces";
 import { Grupo } from "../entidades/Grupo";
-import { FindOperator, In, Not } from "typeorm";
+import { In, Not } from "typeorm";
 import { AsignaturaADocenteAGrupo } from "../entidades/AsignaturaADocenteAGrupo";
 import { Usuario } from "../entidades/Usuario";
 import { ProgramaAAsignatura } from "../entidades/ProgramaAAsignatura";
@@ -29,9 +29,7 @@ const matrRepository = myDataSource.getRepository(Matricula);
 const grupMatrRepository = myDataSource.getRepository(GrupoAMatricula);
 const periRepository = myDataSource.getRepository(Periodo);
 const grupRepository = myDataSource.getRepository(Grupo);
-const asigDoceGrupRepository = myDataSource.getRepository(
-  AsignaturaADocenteAGrupo
-);
+const asigDoceGrupRepository = myDataSource.getRepository(AsignaturaADocenteAGrupo);
 const usuRepository = myDataSource.getRepository(Usuario);
 const progAsigRepository = myDataSource.getRepository(ProgramaAAsignatura);
 const estuProgRepository = myDataSource.getRepository(EstudianteAPrograma);
@@ -155,6 +153,7 @@ class EstudianteDao {
       const matriculasEstu = await matrRepository.find({
         where: { matr_estudiante: idEstu },
         relations: ["grupoMatricula"],
+        order: { matr_id: "DESC" },
       });
       // Guarda los grupos de una matricula, almacenados en la intermedia
       const matrAux = matriculasEstu.map((item) => ({
@@ -167,7 +166,7 @@ class EstudianteDao {
         grupos: item.grupoMatricula.map((subitem) => subitem.grup_matr_idGrup),
       }));
 
-      const semaforo = await generarSemaforo(idsAsig, idsGrupMatr);
+      const semaforo = await generarSemaforo(idEstu, idsAsig, idsGrupMatr);
 
       return res.status(200).json(semaforo);
     } catch (error) {
@@ -234,7 +233,6 @@ class EstudianteDao {
         .json({ response: "No se pudo recuperar la matricula del estudiante" });
     }
   }
-
   // obtener el horario matriculado del estudiante
   static async horario(idEstu: any, res: Response) {
     try {
@@ -277,7 +275,7 @@ class EstudianteDao {
         .json({ response: "No se pudo obtener el horario del estudiante" });
     }
   }
-
+  // devuelve las asignaturas que puede matricular un estudiante
   static async asignaturasValidas(idEstu: any, res: Response) {
     try {
       const periodoActual = await matrRepository
@@ -448,7 +446,7 @@ class EstudianteDao {
       });
     }
   }
-
+  // permite cambiar el estado de una matricula financiera
   static async pagarmatricula(idEstu: any, res: Response) {
     try {
       const periodoActual = await matrRepository
@@ -481,7 +479,7 @@ class EstudianteDao {
         .json({ response: "No se pudo pagar la matricula" });
     }
   }
-
+  // permite agregar asignaturas, simulando la matricula academica
   static async matricularMateria(idEstu: any, idAsignatura: any, idGrup: any, res: Response) {
     try {
       const programaEstudiante = await estuProgRepository.findOne({
@@ -584,7 +582,7 @@ class EstudianteDao {
       return res.status(500).json({ response: "No se pudo matricular la materia" });
     }
   }
-
+  // cambiar de grupo una materia que ya se encontraba matriculada
   static async cambiarGrupo(idEstu: any, idGrup: any, idGrupAntiguo: any, res: Response) {
     try {
       const periodoActual = await matrRepository
@@ -654,9 +652,7 @@ class EstudianteDao {
       return res.status(500).json({ response: "No se pudo cambiar el grupo" });
     }
   }
-
-
-
+  // desrelacionar un grupo de una matricula academica, simulando que ya no se va a ver
   static async eliminarGrupo(idEstu: any, idGrup: any, res: Response) {
     try {
       const periodoActual = await matrRepository
@@ -832,52 +828,71 @@ async function obtenerPromedioAcumulado(ids: IdsGrupMatr[]) {
   return (result.suma / result.creditos).toFixed(2);
 }
 
-async function generarSemaforo(idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
+async function generarSemaforo(idEstu: any, idsAsig: IdsAsig[], idsGrMa: IdsGrupMatr[]) {
   const data: MapaCarrera = {};
 
   for (let i = 1; i <= 10; i++) {
     data[i] = [];
   }
 
+  // Busca el periodo actual
+  const periodoActual = await periRepository.findOne({
+    where: { peri_nombre: "2024-2" },
+  });
+  // Revisa si la materia esta en el periodo actual
+  const matriculaActual = await matrRepository.findOneBy({
+    matr_periodo: periodoActual?.peri_id,
+    matr_estudiante: idEstu
+  });
+
+
+  const grupoAux = await grupMatrRepository.find({
+    where: idsGrMa.flatMap(idMat => 
+      idMat.grupos.map(idsGru => ({
+        grup_matr_idGrup: idsGru,
+        grup_matr_idMatr: idMat.idMatr
+      }))
+    ),
+    relations: ["grupo"]
+  });
+
+  const grupoAuxMap = new Map();
+  for(const gru of grupoAux){
+    const key = `${gru.grup_matr_idGrup}-${gru.grup_matr_idMatr}`;
+    grupoAuxMap.set(key, gru);
+  }
+
+
   for (const Malla of idsAsig) {
     const asignatura = await asigRepository.findOneBy({
       asig_id: Malla.idAsig,
     });
+    
     if (asignatura) {
       let estado = "pendiente";
       let agregado = false;
-
+  
       for (const idMat of idsGrMa) {
         if (agregado) break;
         for (const idGru of idMat.grupos) {
-          if (agregado) break;
-          const grupoAux = await grupMatrRepository.findOne({
-            where: [
-              { grup_matr_idGrup: idGru, grup_matr_idMatr: idMat.idMatr },
-            ],
-            relations: ["grupo"],
-          });
-          // Busca el periodo actual
-          const periodoAux = await periRepository.findOne({
-            where: { peri_nombre: "2024-2" },
-          });
-          // Revisa si la materia esta en el periodo actual
-          const matriculaAux = await matrRepository.findOneBy({
-            matr_periodo: periodoAux?.peri_id,
-          });
-
+          
+          const key = `${idGru}-${idMat.idMatr}`;
+          const miGrupo = grupoAuxMap.get(key);
+          
           // Si esta en la intermedia
-          if (grupoAux?.grupo.grup_asignatura == asignatura.asig_id) {
+          if (miGrupo?.grupo.grup_asignatura == Malla.idAsig) {
             // Si es true, quiere decir que la matriculo y paso
-            if (grupoAux.grup_matr_estado == true) {
+            if (miGrupo.grup_matr_estado == true) {
               estado = "aprobada";
-            } else if (grupoAux.grup_matr_idMatr == matriculaAux?.matr_id) {
+            } else if (miGrupo.grup_matr_idMatr == matriculaActual?.matr_id) {
               // Si es false y la matriculo en el periodo actual, quiere decir que esta en curso
               estado = "cursando";
             } else {
               // Si es false, quiere decir que la matriculo en otro periodo y la perdio
               estado = "pendiente";
             }
+
+            // Eliminar el grupo guardado
             idMat.grupos = idMat.grupos.filter((item) => item != idGru);
             agregado = true;
             break;
@@ -1017,13 +1032,6 @@ function convertirAFecha(hora: string) {
   return fecha;
 }
 
-type HorarioGrupo = {
-  [dia: string]: {
-    salon: string;
-    horaInicio: string;
-    horaFin: string;
-  };
-};
 function verificarCruceHorarios(
   horariosMatriculados: HorarioGrupo[],
   horarioNuevo: HorarioGrupo
@@ -1059,5 +1067,13 @@ function convertirHoraEnMinutos(hora: string): number {
   const [horas, minutos] = hora.split(':').map(Number);
   return horas * 60 + minutos;
 }
+
+type HorarioGrupo = {
+  [dia: string]: {
+    salon: string;
+    horaInicio: string;
+    horaFin: string;
+  };
+};
 
 export default EstudianteDao;
